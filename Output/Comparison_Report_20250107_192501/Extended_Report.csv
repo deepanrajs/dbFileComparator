@@ -1,0 +1,2 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1692,,./input/source.csv,,./Input/mssql_tgt_[MITQE].[dbo].[salesDataSet_Target].csv,,Missing in Target

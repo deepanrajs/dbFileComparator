@@ -6,8 +6,8 @@ import mssqlConnect
 def comparison(config):
     s_section = config['comparison']['source']
     t_section = config['comparison']['target']
-    s_key = config.get(s_section,'table_key')
-    t_key = config.get(t_section,'table_key')
+    s_key = config.get(s_section,'key')
+    t_key = config.get(t_section,'key')
     s_delimiter = config.get(s_section,'delimiter')
     t_delimiter = config.get(t_section,'delimiter')
     s_columns_excluded = config.get(s_section,'columns_excluded')

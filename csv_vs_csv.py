@@ -34,10 +34,10 @@ def comparison(config):
     t_columns_excluded = config[s_section]['columns_excluded']
     html_report = config['compare']['html_report']
     extended_report = config['compare']['extended_report']
+    compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
+                html_report, extended_report)
 
-    print('Data: ', s_section, t_section, s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, html_report, extended_report)
-    print(os.path.abspath(s_file))
-    print(os.path.abspath(t_file))
+def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded, html_report, extended_report):
     source_data = pd.read_csv(os.path.abspath(s_file), index_col=s_key, sep=s_delimiter, encoding_errors='ignore')
     target_data = pd.read_csv(os.path.abspath(t_file), index_col=t_key, sep=t_delimiter, encoding_errors='ignore')
     source_data = source_data.replace(np.nan, '')
@@ -91,7 +91,7 @@ def comparison(config):
     # Process unmatched records (source only and target only)
     # Source-only records (present in source but not in target)
     for s_index in unmatched_source_keys:
-        s_row = source_data.loc[s_index]
+        # s_row = source_data.loc[s_index]
         ext_report.write(get_key(s_index) + "," + "," +
                          s_file + ",," + t_file + ",," + "Missing in Target\n")
         # for column in s_columns:
@@ -100,7 +100,7 @@ def comparison(config):
 
     # Target-only records (present in target but not in source)
     for t_index in unmatched_target_keys:
-        t_row = target_data.loc[t_index]
+        # t_row = target_data.loc[t_index]
         ext_report.write(get_key(t_index) + "," + "," +
                          s_file + ",," + t_file + ",," + "Missing in Source\n")
         # for column in t_columns:

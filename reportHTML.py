@@ -1,8 +1,6 @@
 import json
-import os.path
 
 report_template = "./Report_Template.html"
-
 
 
 def create_html_report(s_record_count, t_record_count, matched_count, unmatched_count, s_only_count, t_only_count,

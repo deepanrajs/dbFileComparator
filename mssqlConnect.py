@@ -1,5 +1,7 @@
 import csv
+
 import pyodbc
+
 
 def write_query_results(output_file, delimiter, q_result, header):
     try:
@@ -21,9 +23,9 @@ def connect(config, dbType, exportAsFile):
     driver = config.get(dbType, 'Driver')
     server = config.get(dbType, 'Server')
     port = config.get(dbType, 'Port')
-    database = config.get(dbType,'dbname')
-    Username = config.get(dbType,'Username')
-    Password = config.get(dbType,'Password')
+    database = config.get(dbType, 'dbname')
+    Username = config.get(dbType, 'Username')
+    Password = config.get(dbType, 'Password')
     # Establish connection to SSMS
     # Connection string for QA instance.
     try:

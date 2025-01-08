@@ -4,7 +4,6 @@ import os
 os.add_dll_directory(
     'C:\\Users\\MITDeepanraj\\PycharmProjects\\dbFileComparator\\.venv\\Lib\\site-packages\\clidriver\\bin')
 import ibm_db
-import ibm_db_dbi as dbi
 
 
 def connect(config, dbType, exportAsFile):
@@ -99,7 +98,7 @@ def get_query_results(connection_string, table_name):
         return None
 
 
-def get_query_results_dbi(connection_string, table_name):  #CDIDTP
+def get_query_results_dbi(connection_string, table_name):  # CDIDTP
     try:
         # Establish a connection using ibm_db_dbi
         # conn = dbi.connect(connection_string, '', '')

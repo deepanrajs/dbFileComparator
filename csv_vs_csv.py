@@ -35,7 +35,32 @@ def comparison(config):
     t_columns_excluded = config[s_section]['columns_excluded']
     html_report = config['comparison']['html_report']
     extended_report = config['comparison']['extended_report']
-    compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
+
+    isFeeder = config.get('comparison','isFeeder')
+    feederFileName= config.get('comparison', 'feederFileName')
+    print('\tFeeder File Name: ', feederFileName)
+    if os.path.isdir(s_file) and os.path.isdir(t_file):
+        print("\nMoving to folder comparison")
+        source_files = {f: os.path.join(s_file, f) for f in os.listdir(s_file) if
+                          f.endswith('.csv')}
+        target_files = {f: os.path.join(t_file, f) for f in os.listdir(t_file) if f.endswith('.csv')}
+        total_source = len(source_files)
+        total_target = len(target_files)
+        print(f"\tTotal files in Source/Target: {total_source}/{total_target}")
+        comparison_count = 0  # Counter for successful comparisons
+        total_comparisons = total_source  # Total number of files to compare (assuming one-to-one mapping)
+
+        for source_file in source_files:
+            for target_file in target_files:
+                if source_file.strip() == target_file.strip():
+                    comparison_count += 1  # Increment the successful comparison count
+                    print(
+                        f'\tComparing {comparison_count}/{total_comparisons} - source_file: {source_file} | target_file: {target_file}')
+                    compare_csv(s_file+'/'+source_file, t_file+'/'+target_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded,
+                                t_columns_excluded, html_report, extended_report)
+
+    else:
+        compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
                 html_report, extended_report)
 
 

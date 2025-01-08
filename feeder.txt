@@ -1,0 +1,6 @@
+Compare|Expected|Actual
+N|./Input/source.csv|./Input/target.csv
+Y|./Input/source.csv|./Input/target.csv
+N|./Input/source.csv|./Input/target.csv
+Y|./Input/source.csv|./Input/target.csv
+N|./Input/source.csv|./Input/target.csv

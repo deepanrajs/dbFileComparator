@@ -22,8 +22,8 @@ class TestCSVFeederComparator(unittest.TestCase):
             feeder_result = csv_vs_csv.compare_csv(
                 './Input/source1.csv',
                 './Input/target1.csv',
-                'Row_ID_O6G3A1_R6',
-                'Row_ID_O6G3A1_R6',
+                'Row_ID_O6G3A1_R6,Order_ID',
+                'Row_ID_O6G3A1_R6,Order_ID',
                 '|', '|', '', '',
                 'test_report.html', 'test_report.csv',
                 'Y', '2', ''

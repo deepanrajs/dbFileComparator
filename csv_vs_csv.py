@@ -98,9 +98,9 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     try:
 
         source_data = pd.read_csv(os.path.abspath(s_file), sep=s_delimiter, encoding_errors='ignore',
-                                  na_filter=True, engine='python')
+                                  na_filter=True)
         target_data = pd.read_csv(os.path.abspath(t_file), sep=t_delimiter, encoding_errors='ignore',
-                                  na_filter=True, engine='python')
+                                  na_filter=True)
         source_data = source_data.replace(np.nan, '')
         target_data = target_data.replace(np.nan, '')
 

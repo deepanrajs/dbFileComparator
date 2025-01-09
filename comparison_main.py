@@ -38,3 +38,4 @@ if __name__ == '__main__':
     hours, remainder = divmod(time_taken, 3600)
     minutes, seconds = divmod(remainder, 60)
     milliseconds = int((seconds - int(seconds)) * 1000)
+    print(f"\nTime taken: {int(hours):02}:{int(minutes):02}:{int(seconds):02}.{int(milliseconds):02}")

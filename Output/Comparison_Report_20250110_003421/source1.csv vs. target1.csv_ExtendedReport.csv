@@ -1,0 +1,7 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1_CA-2019-15215,Order_Date,./input/source1.csv,2019-11-09,./input/target1.csv,2019-11-08,Mismatch
+1_CA-2019-15215,Ship_Date,./input/source1.csv,2019-11-11,./input/target1.csv,2019-11-10,Mismatch
+53100_CA-2020-11991,,./input/source1.csv,,./input/target1.csv,,Missing in Target
+4_CA-2019-15215,,./input/source1.csv,,./input/target1.csv,,Missing in Target
+3_CA-2019-15215,,./input/source1.csv,,./input/target1.csv,,Missing in Source
+53100_CA-2020-11991,,./input/source1.csv,,./input/target1.csv,,Missing in Source

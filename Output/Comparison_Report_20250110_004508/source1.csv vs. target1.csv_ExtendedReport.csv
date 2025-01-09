@@ -1,0 +1,6 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1_CA-2019-15215,Order_Date,./input/source1.csv,2019-11-10,./input/target1.csv,2019-11-09,Mismatch
+1_CA-2019-15215,Ship_Date,./input/source1.csv,2019-11-10,./input/target1.csv,2019-11-11,Mismatch
+1_CA-2019-15215,Ship_Mode,./input/source1.csv,Second Class,./input/target1.csv,Seconda Class,Mismatch
+1_CA-2019-15215,Customer_Name,./input/source1.csv,Claire Gute,./input/target1.csv,Clairae Gute,Mismatch
+1_CA-2019-15215,Country,./input/source1.csv,United States,./input/target1.csv,Unitead States,Mismatch

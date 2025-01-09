@@ -1,0 +1,3 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+5,,./input/source1.csv,,./input/target1.csv,,Missing in Target
+3,,./input/source1.csv,,./input/target1.csv,,Missing in Source

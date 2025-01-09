@@ -1,0 +1,4 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+53100,Order_ID,./Input/source1.csv,CA-2020-119914,./Input/target1.csv,CA-2020-119915,Mismatch
+4,,./Input/source1.csv,,./Input/target1.csv,,Missing in Target
+3,,./Input/source1.csv,,./Input/target1.csv,,Missing in Source

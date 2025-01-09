@@ -1,6 +1,6 @@
 import json
 
-report_template = "./Report_Template.html"
+report_template = "./config/Report_Template.html"
 
 
 def create_html_report(s_record_count, t_record_count, matched_count, unmatched_count, s_only_count, t_only_count,
@@ -25,3 +25,4 @@ def create_html_report(s_record_count, t_record_count, matched_count, unmatched_
     else:
         report_file = open(output_directory + '/' + h_report, 'w')
     report_file.write(template_data.replace('dynamic_value', '\'' + json_object + '\''))
+    report_file.close()

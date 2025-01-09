@@ -17,7 +17,6 @@ def write_query_results(output_file, delimiter, q_result, header):
 
 
 def connect(config, dbType, exportAsFile):
-    global cursor, myConnection
     tablename = config.get(dbType, 'table_name')
     delimiter = config.get(dbType, 'delimiter')
     driver = config.get(dbType, 'Driver')

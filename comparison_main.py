@@ -8,7 +8,7 @@ import time
 def main():
     # Main function to load the configuration and call the appropriate comparison function.
 
-    config_file = 'config.ini'  # Path to your INI config file
+    config_file = './config/config.ini'  # Path to your INI config file
     config = configReader.load_config(config_file)
 
     # Get comparison type from the config

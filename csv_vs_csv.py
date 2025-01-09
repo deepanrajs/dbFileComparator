@@ -41,7 +41,7 @@ def comparison(config):
         feederFileName = config.get('comparison', 'feederFileName')
         feederFileDelimiter = config.get('comparison', 'feederFileDelimiter')
         print('\tFeeder File Name: ', feederFileName)
-        with open(feederFileName, 'r') as f:
+        with open('./config/'+feederFileName, 'r') as f:
             reader = list(csv.DictReader(f, delimiter=feederFileDelimiter))
             total_lines = len(reader)
             print(f'\n\tTotal entries in the feeder file: {total_lines}')
@@ -116,17 +116,17 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                     raise KeyError(f"Column '{col}' not found in target data.")
             # Create composite keys for source and target data
             source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join,
-                                                                              axis=1)  # Combine columns in s_key
+                                                                                      axis=1)  # Combine columns in s_key
             target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join,
-                                                                              axis=1)  # Combine columns in t_key
+                                                                                      axis=1)  # Combine columns in t_key
 
         elif s_key == '' and t_key == '':
             sColumnList = list(source_data.columns)
             tColumnList = list(target_data.columns)
             source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join,
-                                                                                      axis=1)  # Combine columns in s_key
+                                                                                    axis=1)  # Combine columns in s_key
             target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join,
-                                                                                      axis=1)  # Combine columns in t_key
+                                                                                    axis=1)  # Combine columns in t_key
             source_data.set_index('composite_key', inplace=True)
             target_data.set_index('composite_key', inplace=True)
         else:
@@ -141,26 +141,20 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         target_duplicates = target_data[target_data.duplicated(subset=['composite_key'], keep=False)]
         # print('Length target_duplicates: ', len(target_duplicates))
 
-        if not source_duplicates.empty:
-            print(f"\n\tDuplicate keys found in the source data:")
-            # print(f'\t\t{source_duplicates}')
-            print(f"\t\tDuplicate keys detected in source data. Please resolve them before proceeding.")
+        source_record_count = len(source_data)
+        target_record_count = len(target_data)
 
-        elif not target_duplicates.empty:
-            print("\n\tDuplicate keys found in the target data:")
-            # print(f'\t\t{target_duplicates}')
-            print(f"\t\tDuplicate keys detected in target data. Please resolve them before proceeding.")
+        source_duplicate_count =int((len(source_duplicates))/2)
+        target_duplicate_count = int((len(target_duplicates))/2)
 
         if not source_duplicates.empty or not target_duplicates.empty:
-            print("\n\tExecuting fallback mechanism to remove duplicates before proceeding with comparison"
-                  "\n\tNote: The output might not be as expected.\n")
+            print(f'\t\tDuplicate records detected. '
+                  f'A total of {source_duplicate_count} duplicates in source and {target_duplicate_count} duplicates in target found. Please address these before continuing.'
+                  f'\n\tExecuting fallback mechanism to remove duplicates before proceeding with comparison.'
+                  f'\n\t\tNote: The output might not be as expected.\n')
             source_data = source_data.drop_duplicates()
             target_data = target_data.drop_duplicates()
 
-        source_record_count = len(source_data)
-        target_record_count = len(target_data)
-        source_duplicate_count = len(source_duplicates)
-        target_duplicate_count = len(target_duplicates)
         s_columns = []
         t_columns = []
         os.makedirs(output_directory, exist_ok=True)
@@ -244,13 +238,27 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         print(f"\t\t\tOnly in Target: {records_in_target_only}")
 
         print("\t\tDuplicate Records:")
-        print(f"\t\t\tSource Duplicates: {records_in_source_only}")
-        print(f"\t\t\tTarget Duplicates: {records_in_target_only}")
+        print(f"\t\t\tSource Duplicates: {source_duplicate_count}")
+        print(f"\t\t\tTarget Duplicates: {target_duplicate_count}")
 
         reportHTML.create_html_report(source_record_count, target_record_count, matched_records, mismatched_records,
-                                      records_in_source_only, records_in_target_only, fileName+'_'+html_report, output_directory,
-                                      s_file, t_file, ext_report_abs, counter, source_duplicate_count, target_duplicate_count)
+                                      records_in_source_only, records_in_target_only, fileName+'_'+html_report,
+                                      output_directory,s_file, t_file, ext_report_abs, counter,
+                                      source_duplicate_count, target_duplicate_count)
     except FileNotFoundError as fnf_error:
         print(f'\nFile not found: {fnf_error}')
     except ValueError as va_error:
         print(f'\nValue error: {va_error}\n\tThe source and target data might have duplicate rows')
+    except Exception as error:
+        print(f'\nException: {error}')
+    comparison_summary = {
+        "source_record_count": source_record_count,
+        "target_record_count": target_record_count,
+        "matched_records": matched_records,
+        "mismatched_records": mismatched_records,
+        "records_in_source_only": records_in_source_only,
+        "records_in_target_only": records_in_target_only,
+        "source_duplicate_count": source_duplicate_count,
+        "target_duplicate_count": target_duplicate_count
+    }
+    return {"summary": comparison_summary}

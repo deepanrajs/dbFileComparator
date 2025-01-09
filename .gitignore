@@ -1,13 +1,13 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*.so
+#__pycache__/
+#*.py[cod]
+#*.so
 
 # PyCharm
-.idea/
-.mypy_cache/
-.pytest_cache/
+#.idea/
+#.mypy_cache/
+#.pytest_cache/
 
 # Virtual environment
-venv/
-env/
+#venv/
+#env/

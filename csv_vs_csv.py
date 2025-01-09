@@ -119,8 +119,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                                                                               axis=1)  # Combine columns in s_key
             target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join,
                                                                               axis=1)  # Combine columns in t_key
-            source_data.set_index('composite_key', inplace=True)
-            target_data.set_index('composite_key', inplace=True)
+
         elif s_key == '' and t_key == '':
             sColumnList = list(source_data.columns)
             tColumnList = list(target_data.columns)
@@ -133,9 +132,35 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         else:
             source_data.set_index(s_key, inplace=True)
             target_data.set_index(t_key, inplace=True)
+            source_data['composite_key'] = source_data.index
+            target_data['composite_key'] = target_data.index
+
+        # Duplicate check for source and target composite keys
+        source_duplicates = source_data[source_data.duplicated(subset=['composite_key'], keep=False)]
+        # print('Length source_duplicates: ', len(source_duplicates))
+        target_duplicates = target_data[target_data.duplicated(subset=['composite_key'], keep=False)]
+        # print('Length target_duplicates: ', len(target_duplicates))
+
+        if not source_duplicates.empty:
+            print(f"\n\tDuplicate keys found in the source data:")
+            # print(f'\t\t{source_duplicates}')
+            print(f"\t\tDuplicate keys detected in source data. Please resolve them before proceeding.")
+
+        elif not target_duplicates.empty:
+            print("\n\tDuplicate keys found in the target data:")
+            # print(f'\t\t{target_duplicates}')
+            print(f"\t\tDuplicate keys detected in target data. Please resolve them before proceeding.")
+
+        if not source_duplicates.empty or not target_duplicates.empty:
+            print("\n\tExecuting fallback mechanism to remove duplicates before proceeding with comparison"
+                  "\n\tNote: The output might not be as expected.\n")
+            source_data = source_data.drop_duplicates()
+            target_data = target_data.drop_duplicates()
 
         source_record_count = len(source_data)
         target_record_count = len(target_data)
+        source_duplicate_count = len(source_duplicates)
+        target_duplicate_count = len(target_duplicates)
         s_columns = []
         t_columns = []
         os.makedirs(output_directory, exist_ok=True)
@@ -205,14 +230,27 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
             #     ext_report.write(get_key(t_index) + ',' + str(column) + ',' + ',' + str(t_row[column]) + ',,\n')
 
         ext_report.close()
-        print('\t\tSource_record_count ' + str(source_record_count))
-        print('\t\tTarget_record_count ' + str(target_record_count))
-        print('\t\tMatched_records ' + str(matched_records))
-        print('\t\tMismatched_records ' + str(mismatched_records))
-        print('\t\tRecords_in_source_only ' + str(records_in_source_only))
-        print('\t\tRecords_in_target_only ' + str(records_in_target_only))
+        print("\tSummary of Comparison:")
+        print("\t\tComparison Stats:")
+        print(f"\t\t\tSource Records: {source_record_count}")
+        print(f"\t\t\tTarget Records: {target_record_count}")
+
+        print("\t\tComparison Results:")
+        print(f"\t\t\tMatched: {matched_records}")
+        print(f"\t\t\tMismatched: {mismatched_records}")
+
+        print("\t\tMissing Records:")
+        print(f"\t\t\tOnly in Source: {records_in_source_only}")
+        print(f"\t\t\tOnly in Target: {records_in_target_only}")
+
+        print("\t\tDuplicate Records:")
+        print(f"\t\t\tSource Duplicates: {records_in_source_only}")
+        print(f"\t\t\tTarget Duplicates: {records_in_target_only}")
+
         reportHTML.create_html_report(source_record_count, target_record_count, matched_records, mismatched_records,
                                       records_in_source_only, records_in_target_only, fileName+'_'+html_report, output_directory,
-                                      s_file, t_file, ext_report_abs, counter)
+                                      s_file, t_file, ext_report_abs, counter, source_duplicate_count, target_duplicate_count)
     except FileNotFoundError as fnf_error:
         print(f'\nFile not found: {fnf_error}')
+    except ValueError as va_error:
+        print(f'\nValue error: {va_error}\n\tThe source and target data might have duplicate rows')

@@ -36,9 +36,12 @@
     let totalMismatches = srcOnlyTx + tgtOnlyTx;
     let totalSrcTx = txModel.Source_transactions;
     let totalTgtTx = txModel.Target_transactions;
-    let srctable = txModel.source
-    let tgttable = txModel.target
+    let srctable = txModel.source;
+    let tgttable = txModel.target;
     let ext_rep = txModel.report_path;
+    let sourceDups = txModel.s_dups;
+    let targetDups = txModel.t_dups;
+    let totalDuplicates = sourceDups + targetDups
     /*var skippedNo = totalNo - executedNo;
     var totalValue = totalNo;
 */
@@ -129,6 +132,7 @@
     $('.matchTx').text(matchedTx);
     $('.unmatchTx').text(nonMatchedTx);
     $('.repPathTx').text(ext_rep);
+    $('.duplicatesTx').text(totalDuplicates +" | "+ sourceDups +"Src : "+ targetDups+"Tgt");
 
     //Result Accordian
     $(".toggle-accordion").on("click", function () {
@@ -222,7 +226,7 @@
                     <span class="statsCount">Missing Count</span>
                 </div>
             </div>
-            <div class="countRow pdLeft">
+            <div class="countRow">
                 <div class="stats-box">
                     <span class="count"><b class="counter matchTx"></b></span><br>
                     <span class="statsCount">Matching Count</span>
@@ -230,6 +234,10 @@
                 <div class="stats-box-long">
                     <span class="count"><b class="counter unmatchTx"></b></span><br>
                     <span class="statsCount">NonMatching Count</span>
+                </div>
+                <div class="stats-box-long">
+                    <span class="count"><b class="counter duplicatesTx"></b></span><br>
+                    <span class="statsCount">Duplicate Count</span>
                 </div>
             </div>
         </div>

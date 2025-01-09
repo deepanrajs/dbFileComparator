@@ -1,0 +1,3 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1,Profit,./Input/source.csv,41.91360092163086,./Input/target.csv,41.91,Mismatch
+1692,,./Input/source.csv,,./Input/target.csv,,Missing in Target

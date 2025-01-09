@@ -1,8 +1,8 @@
 import os
 
 # Add DB2 driver path for Windows
-os.add_dll_directory(
-    'C:\\Users\\MITDeepanraj\\PycharmProjects\\dbFileComparator\\.venv\\Lib\\site-packages\\clidriver\\bin')
+# os.add_dll_directory(
+#     'C:\\Users\\MITDeepanraj\\PycharmProjects\\dbFileComparator\\.venv\\Lib\\site-packages\\clidriver\\bin')
 import ibm_db
 
 

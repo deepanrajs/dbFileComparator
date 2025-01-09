@@ -2,6 +2,7 @@ import configReader
 import csv_vs_csv
 import csv_vs_db
 import db_vs_db
+import time
 
 
 def main():
@@ -11,16 +12,18 @@ def main():
     config = configReader.load_config(config_file)
 
     # Get comparison type from the config
-    comparison = config.get('comparison','comparison')
+    source = config.get('comparison','source')
+    target = config.get('comparison','target')
 
     # Call respective functions based on source and target
-    if comparison.upper() == 'CSV_VS_CSV':
+    if source.upper().startswith('CSV_') and target.upper().startswith('CSV_'):
         print('\tComparing CSV vs. CSV...')
         csv_vs_csv.comparison(config)
-    elif comparison.upper() == 'DB_VS_DB':
+    elif source.upper().startswith('DB_') and target.upper().startswith('DB_'):
         print('\tComparing DB vs. DB')
         db_vs_db.comparison(config)
-    elif comparison.upper() == 'DB_VS_CSV' or comparison.upper() == 'CSV_VS_DB':
+    elif ((source.upper().startswith('CSV_') and target.upper().startswith('DB_'))
+          or (source.upper().startswith('DB_') and target.upper().startswith('CSV_'))):
         print('Comparing CSV vs. DB')
         csv_vs_db.comparison(config)
     else:
@@ -28,4 +31,10 @@ def main():
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     main()
+    end_time = time.time()
+    time_taken = end_time - start_time
+    hours, remainder = divmod(time_taken, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    milliseconds = int((seconds - int(seconds)) * 1000)

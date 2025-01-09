@@ -1,5 +1,0 @@
-KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
-53100_CA-2020-11991,,./input/source1.csv,,./input/target1.csv,,Missing in Target
-4_CA-2019-15215,,./input/source1.csv,,./input/target1.csv,,Missing in Target
-53100_CA-2020-11991,,./input/source1.csv,,./input/target1.csv,,Missing in Source
-3_CA-2019-15215,,./input/source1.csv,,./input/target1.csv,,Missing in Source

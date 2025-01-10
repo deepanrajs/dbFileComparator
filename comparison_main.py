@@ -8,7 +8,7 @@ import time
 def main():
     # Main function to load the configuration and call the appropriate comparison function.
 
-    config_file = 'config.ini'  # Path to your INI config file
+    config_file = './config/config.ini'  # Path to your INI config file
     config = configReader.load_config(config_file)
 
     # Get comparison type from the config
@@ -38,3 +38,4 @@ if __name__ == '__main__':
     hours, remainder = divmod(time_taken, 3600)
     minutes, seconds = divmod(remainder, 60)
     milliseconds = int((seconds - int(seconds)) * 1000)
+    print(f"\nTime taken: {int(hours):02}:{int(minutes):02}:{int(seconds):02}.{int(milliseconds):02}")

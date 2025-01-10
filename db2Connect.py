@@ -1,4 +1,4 @@
-import os
+# import os
 
 # Add DB2 driver path for Windows
 # os.add_dll_directory(

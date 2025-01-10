@@ -1,6 +1,0 @@
-Compare,Source,Source_Key,Source_Delimiter,Target,Target_Key,Target_Delimiter,columns_excluded
-N,./Input/source.csv,Row_ID_O6G3A1_R6,|,./Input/target.csv,Row_ID_O6G3A1_R6,|,
-Y,./Input/source.csv,Row_ID_O6G3A1_R6,|,./Input/target.csv,Row_ID_O6G3A1_R6,|,Profit
-Y,./Input/source.csv,Row_ID_O6G3A1_R6,|,./Input/source.csv,Row_ID_O6G3A1_R6,|,Profit
-Y,./Input/target.csv,Row_ID_O6G3A1_R6,|,./Input/source.csv,Row_ID_O6G3A1_R6,|,Profit
-N,./Input/source.csv,Row_ID_O6G3A1_R6,|,./Input/target.csv,Row_ID_O6G3A1_R6,|,

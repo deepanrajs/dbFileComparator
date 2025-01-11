@@ -36,14 +36,14 @@ class TestCSVFeederComparator(unittest.TestCase):
         comparison_summary = feeder_result.get("summary", {})
 
         # Add assertions for each field
-        self.assertEqual(comparison_summary.get("source_record_count"), 6, "Source record count mismatch")
+        self.assertEqual(comparison_summary.get("source_record_count"), 7, "Source record count mismatch")
         self.assertEqual(comparison_summary.get("target_record_count"), 5, "Target record count mismatch")
-        self.assertEqual(comparison_summary.get("matched_records"), 2, "Matched record count mismatch")
+        self.assertEqual(comparison_summary.get("matched_records"), 4, "Matched record count mismatch")
         self.assertEqual(comparison_summary.get("mismatched_records"), 1, "Mismatched record count mismatch")
-        self.assertEqual(comparison_summary.get("records_in_source_only"), 1, "Records in source only count mismatch")
-        self.assertEqual(comparison_summary.get("records_in_target_only"), 1, "Records in target only count mismatch")
+        self.assertEqual(comparison_summary.get("records_in_source_only"), 0, "Records in source only count mismatch")
+        self.assertEqual(comparison_summary.get("records_in_target_only"), 0, "Records in target only count mismatch")
         self.assertEqual(comparison_summary.get("source_duplicate_count"), 2, "Source duplicate count mismatch")
-        self.assertEqual(comparison_summary.get("target_duplicate_count"), 1, "Target duplicate count mismatch")
+        self.assertEqual(comparison_summary.get("target_duplicate_count"), 0, "Target duplicate count mismatch")
 
 
 if __name__ == '__main__':

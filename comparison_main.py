@@ -1,4 +1,5 @@
 import configReader
+import csvCompare
 import csv_vs_csv
 import csv_vs_db
 import db_vs_db
@@ -18,7 +19,8 @@ def main():
     # Call respective functions based on source and target
     if source.upper().startswith('CSV_') and target.upper().startswith('CSV_'):
         print('\tComparing CSV vs. CSV...')
-        csv_vs_csv.comparison(config)
+        # csv_vs_csv.comparison(config)
+        csvCompare.comparison(config)
     elif source.upper().startswith('DB_') and target.upper().startswith('DB_'):
         print('\tComparing DB vs. DB')
         db_vs_db.comparison(config)

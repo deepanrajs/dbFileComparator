@@ -1,10 +1,10 @@
 import csv
 import datetime
 import os
-from traceback import print_tb
 
 import numpy as np
 import pandas as pd
+from pandas.core.interchange.from_dataframe import primitive_column_to_ndarray
 
 import reportHTML
 
@@ -104,11 +104,10 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                                   na_filter=True)
         source_data = source_data.replace(np.nan, '')
         target_data = target_data.replace(np.nan, '')
-
         if ',' in s_key and t_key:
-            s_key_columns = s_key.split(',')
-            t_key_columns = t_key.split(',')
-            print('\t\t\tGenerating Composite Key')
+            s_key_columns = [key.strip() for key in s_key.split(',')]
+            t_key_columns = [key.strip() for key in t_key.split(',')]
+            print('\t\t\tMultiple Primary Key provided, generating Composite Key')
             for col in s_key_columns:
                 if col not in source_data.columns:
                     raise KeyError(f"Column '{col}' not found in source data.")
@@ -116,10 +115,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                 if col not in target_data.columns:
                     raise KeyError(f"Column '{col}' not found in target data.")
             # Create composite keys for source and target data
-            source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join,
-                                                                                      axis=1)  # Combine columns in s_key
-            target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join,
-                                                                                      axis=1)  # Combine columns in t_key
+            source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join, axis=1)
+            target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join, axis=1)
             # print("Source Composite Keys:", source_data['composite_key'])
             # print("Target Composite Keys:", target_data['composite_key'])
             source_data.set_index(s_key_columns, inplace=True)
@@ -136,17 +133,16 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
             source_data.set_index(sColumnList, inplace=True)
             target_data.set_index(tColumnList, inplace=True)
         else:
+            s_key = [key.strip() for key in s_key.split(',')]
+            t_key = [key.strip() for key in t_key.split(',')]
+            print("\t\t\tSingle Primary Key used for comparison")
             source_data.set_index(s_key, inplace=True)
             target_data.set_index(t_key, inplace=True)
-            source_data['composite_key'] = source_data.index
-            target_data['composite_key'] = target_data.index
-
+            source_data['composite_key'] = source_data.index.astype(str)
+            target_data['composite_key'] = target_data.index.astype(str)
         # Duplicate check for source and target composite keys
-        source_duplicates = source_data[source_data.duplicated(subset=['composite_key'], keep=False)]
-        # print('Length source_duplicates: ', len(source_duplicates))
-        target_duplicates = target_data[target_data.duplicated(subset=['composite_key'], keep=False)]
-        # print('Length target_duplicates: ', len(target_duplicates))
-
+        source_duplicates = source_data[source_data[s_key].duplicated()]
+        target_duplicates = target_data[target_data[t_key].duplicated()]
         source_record_count = len(source_data)
         target_record_count = len(target_data)
 
@@ -156,8 +152,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         if not source_duplicates.empty or not target_duplicates.empty:
             print(f'\t\tDuplicate records detected. '
                   f'A total of {source_duplicate_count} duplicates in source and {target_duplicate_count} duplicates in target found. Please address these before continuing.'
-                  f'\n\tExecuting fallback mechanism to remove duplicates before proceeding with comparison.'
-                  f'\n\t\tNote: The output might not be as expected.\n')
+                  f'\n\t\t\tExecuting fallback mechanism to remove duplicates before proceeding with comparison.'
+                  f'\n\t\t\t\tNote: The output might not be as expected.\n')
             source_data = source_data.drop_duplicates()
             target_data = target_data.drop_duplicates()
 
@@ -172,6 +168,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
             ext_report = open(output_directory + '/' + fileName + '_' + extended_report, 'w')
         ext_report_abs = os.path.abspath(output_directory + '/' + fileName + '_' + extended_report)
         ext_report.write('KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS' + '\n')
+        # ext_report.write(source_duplicates + ',' + str(column) + ',' + s_file + ',' + str(s_row[column]) + ',' +
+        #                  t_file + ',' + str(t_row[column]) + ',Mismatch\n')
         for column in source_data.columns:
             if column not in s_columns_excluded:
                 s_columns.append(column)
@@ -196,15 +194,23 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         # Compare matched keys row by row and column by column
         total_mismatches = 0
         for key in matched_keys:
-            # print('matched_keys: ', matched_keys)
-            composite_key = "_".join(map(str, key))
-            # print('composite_key:', composite_key)
-            s_row = source_data[source_data['composite_key'] == composite_key]
-            t_row = target_data[target_data['composite_key'] == composite_key]
+            if isinstance(key, (tuple, list)):
+                composite_key = "_".join(map(str, key))
+                s_row = source_data[source_data['composite_key'] == composite_key]
+                t_row = target_data[target_data['composite_key'] == composite_key]
+            else:
+                composite_key = key
+                s_row = source_data.loc[key]
+                t_row = target_data[target_data['composite_key'] == composite_key]
+
             # Ensure you're only comparing rows (should be a single row per key)
             if not s_row.empty and not t_row.empty:
+                print('s_row before: ', s_row)
+                print('t_row before: ', t_row)
                 s_row = s_row.iloc[0]  # Extract the first row
                 t_row = t_row.iloc[0]  # Extract the first row
+                print('s_row after: ', s_row)
+                print('t_row after: ', t_row)
                 row_mismatches = 0  # Track mismatches for this row
                 # Compare each column in the matched rows
                 for column in s_columns:
@@ -266,7 +272,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     except ValueError as va_error:
         print(f'\nValue error: {va_error}\n\tThe source and target data might have duplicate rows')
     except Exception as error:
-        print(f'\nException: {error}')
+        print(f'\nError: {error}')
     comparison_summary = {
         "source_record_count": source_record_count,
         "target_record_count": target_record_count,

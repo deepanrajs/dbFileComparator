@@ -1,0 +1,3 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1,Order_Date,./input/generated_data1_source.csv,03-01-20233,./input/generated_data1_target.csv,03-01-20231
+11,Order_Date,./input/generated_data1_source.csv,23-10-20221,./input/generated_data1_target.csv,23-10-20212

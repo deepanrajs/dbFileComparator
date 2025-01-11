@@ -1,0 +1,5 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1_,Order_Date,./input/generated_data1_source.csv,03-01-2023,./input/generated_data1_target.csv,03-01-2024,Mismatch
+2_,Order_Date,./input/generated_data1_source.csv,13-02-2022,./input/generated_data1_target.csv,13-02-2024,Mismatch
+6_,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
+4_,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source

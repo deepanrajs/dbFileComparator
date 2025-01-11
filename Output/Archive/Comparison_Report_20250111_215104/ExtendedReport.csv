@@ -1,0 +1,2 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+1,ind2,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,

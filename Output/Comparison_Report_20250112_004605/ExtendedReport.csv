@@ -1,0 +1,94 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+7_7_02-01-2022,ind2,./input/generated_data1_source.csv,5054a701-7e11-44c5-ae33-286db90a072f,./input/generated_data1_target.csv,4054a701-7e11-44c5-ae33-286db90a072f, Mismatch
+9_9_01-12-2023,Row_ID_O6G3A1_R6,./input/generated_data1_source.csv,9,,,Missing in Target
+9_9_01-12-2023,Order_ID,./input/generated_data1_source.csv,9,,,Missing in Target
+9_9_01-12-2023,Order_Date,./input/generated_data1_source.csv,01-12-2023,,,Missing in Target
+9_9_01-12-2023,Ship_Date,./input/generated_data1_source.csv,30-04-2024,,,Missing in Target
+9_9_01-12-2023,Ship_Mode,./input/generated_data1_source.csv,First Class,,,Missing in Target
+9_9_01-12-2023,Customer_ID,./input/generated_data1_source.csv,230307bf-cf5c-44d7-a69b-3a8fff6d7ee6,,,Missing in Target
+9_9_01-12-2023,Customer_Name,./input/generated_data1_source.csv,Anthony Jackson,,,Missing in Target
+9_9_01-12-2023,Segment,./input/generated_data1_source.csv,Consumer,,,Missing in Target
+9_9_01-12-2023,Country,./input/generated_data1_source.csv,United States,,,Missing in Target
+9_9_01-12-2023,City,./input/generated_data1_source.csv,Baxterton,,,Missing in Target
+9_9_01-12-2023,State,./input/generated_data1_source.csv,Delaware,,,Missing in Target
+9_9_01-12-2023,Region,./input/generated_data1_source.csv,South,,,Missing in Target
+9_9_01-12-2023,Product_ID,./input/generated_data1_source.csv,93a1a01e-82c0-4db7-8cdd-d281f4ed5e5f,,,Missing in Target
+9_9_01-12-2023,Category,./input/generated_data1_source.csv,Office Supplies,,,Missing in Target
+9_9_01-12-2023,Sub_Category,./input/generated_data1_source.csv,film,,,Missing in Target
+9_9_01-12-2023,Product_Name,./input/generated_data1_source.csv,integrate distributed convergence,,,Missing in Target
+9_9_01-12-2023,Sales,./input/generated_data1_source.csv,432.04,,,Missing in Target
+9_9_01-12-2023,Quantity,./input/generated_data1_source.csv,3,,,Missing in Target
+9_9_01-12-2023,Profit,./input/generated_data1_source.csv,107.86,,,Missing in Target
+9_9_01-12-2023,Returns,./input/generated_data1_source.csv,and,,,Missing in Target
+9_9_01-12-2023,Payment_Mode,./input/generated_data1_source.csv,Cards,,,Missing in Target
+9_9_01-12-2023,ind1,./input/generated_data1_source.csv,,,,Missing in Target
+9_9_01-12-2023,ind2,./input/generated_data1_source.csv,,,,Missing in Target
+11_10_23-10-2022,Row_ID_O6G3A1_R6,./input/generated_data1_source.csv,11,,,Missing in Target
+11_10_23-10-2022,Order_ID,./input/generated_data1_source.csv,10,,,Missing in Target
+11_10_23-10-2022,Order_Date,./input/generated_data1_source.csv,23-10-2022,,,Missing in Target
+11_10_23-10-2022,Ship_Date,./input/generated_data1_source.csv,12-10-2021,,,Missing in Target
+11_10_23-10-2022,Ship_Mode,./input/generated_data1_source.csv,Standard Class,,,Missing in Target
+11_10_23-10-2022,Customer_ID,./input/generated_data1_source.csv,59c9f156-d157-42d1-af17-121854763a1f,,,Missing in Target
+11_10_23-10-2022,Customer_Name,./input/generated_data1_source.csv,William Yang,,,Missing in Target
+11_10_23-10-2022,Segment,./input/generated_data1_source.csv,Corporate,,,Missing in Target
+11_10_23-10-2022,Country,./input/generated_data1_source.csv,United States,,,Missing in Target
+11_10_23-10-2022,City,./input/generated_data1_source.csv,West Jenniferport,,,Missing in Target
+11_10_23-10-2022,State,./input/generated_data1_source.csv,Louisiana,,,Missing in Target
+11_10_23-10-2022,Region,./input/generated_data1_source.csv,North,,,Missing in Target
+11_10_23-10-2022,Product_ID,./input/generated_data1_source.csv,9a68e96c-6531-473e-92e2-daac5431da63,,,Missing in Target
+11_10_23-10-2022,Category,./input/generated_data1_source.csv,Office Supplies,,,Missing in Target
+11_10_23-10-2022,Sub_Category,./input/generated_data1_source.csv,bag,,,Missing in Target
+11_10_23-10-2022,Product_Name,./input/generated_data1_source.csv,integrate transparent systems,,,Missing in Target
+11_10_23-10-2022,Sales,./input/generated_data1_source.csv,811.61,,,Missing in Target
+11_10_23-10-2022,Quantity,./input/generated_data1_source.csv,4,,,Missing in Target
+11_10_23-10-2022,Profit,./input/generated_data1_source.csv,69.93,,,Missing in Target
+11_10_23-10-2022,Returns,./input/generated_data1_source.csv,,,,Missing in Target
+11_10_23-10-2022,Payment_Mode,./input/generated_data1_source.csv,Cash,,,Missing in Target
+11_10_23-10-2022,ind1,./input/generated_data1_source.csv,,,,Missing in Target
+11_10_23-10-2022,ind2,./input/generated_data1_source.csv,,,,Missing in Target
+12_10_23-10-20212,Row_ID_O6G3A1_R6,,,,./input/generated_data1_target.csv,12,Missing in Source
+12_10_23-10-20212,Order_ID,,,,./input/generated_data1_target.csv,10,Missing in Source
+12_10_23-10-20212,Order_Date,,,,./input/generated_data1_target.csv,23-10-20212,Missing in Source
+12_10_23-10-20212,Ship_Date,,,,./input/generated_data1_target.csv,12-10-2021,Missing in Source
+12_10_23-10-20212,Ship_Mode,,,,./input/generated_data1_target.csv,Standard Class,Missing in Source
+12_10_23-10-20212,Customer_ID,,,,./input/generated_data1_target.csv,59c9f156-d157-42d1-af17-121854763a1f,Missing in Source
+12_10_23-10-20212,Customer_Name,,,,./input/generated_data1_target.csv,William Yang,Missing in Source
+12_10_23-10-20212,Segment,,,,./input/generated_data1_target.csv,Corporate,Missing in Source
+12_10_23-10-20212,Country,,,,./input/generated_data1_target.csv,United States,Missing in Source
+12_10_23-10-20212,City,,,,./input/generated_data1_target.csv,West Jenniferport,Missing in Source
+12_10_23-10-20212,State,,,,./input/generated_data1_target.csv,Louisiana,Missing in Source
+12_10_23-10-20212,Region,,,,./input/generated_data1_target.csv,North,Missing in Source
+12_10_23-10-20212,Product_ID,,,,./input/generated_data1_target.csv,9a68e96c-6531-473e-92e2-daac5431da63,Missing in Source
+12_10_23-10-20212,Category,,,,./input/generated_data1_target.csv,Office Supplies,Missing in Source
+12_10_23-10-20212,Sub_Category,,,,./input/generated_data1_target.csv,bag,Missing in Source
+12_10_23-10-20212,Product_Name,,,,./input/generated_data1_target.csv,integrate transparent systems,Missing in Source
+12_10_23-10-20212,Sales,,,,./input/generated_data1_target.csv,811.61,Missing in Source
+12_10_23-10-20212,Quantity,,,,./input/generated_data1_target.csv,4,Missing in Source
+12_10_23-10-20212,Profit,,,,./input/generated_data1_target.csv,69.93,Missing in Source
+12_10_23-10-20212,Returns,,,,./input/generated_data1_target.csv,,Missing in Source
+12_10_23-10-20212,Payment_Mode,,,,./input/generated_data1_target.csv,Cash,Missing in Source
+12_10_23-10-20212,ind1,,,,./input/generated_data1_target.csv,,Missing in Source
+12_10_23-10-20212,ind2,,,,./input/generated_data1_target.csv,,Missing in Source
+9_9_01-12-2022,Row_ID_O6G3A1_R6,,,,./input/generated_data1_target.csv,9,Missing in Source
+9_9_01-12-2022,Order_ID,,,,./input/generated_data1_target.csv,9,Missing in Source
+9_9_01-12-2022,Order_Date,,,,./input/generated_data1_target.csv,01-12-2022,Missing in Source
+9_9_01-12-2022,Ship_Date,,,,./input/generated_data1_target.csv,30-04-2024,Missing in Source
+9_9_01-12-2022,Ship_Mode,,,,./input/generated_data1_target.csv,First Class,Missing in Source
+9_9_01-12-2022,Customer_ID,,,,./input/generated_data1_target.csv,230307bf-cf5c-44d7-a69b-3a8fff6d7ee6,Missing in Source
+9_9_01-12-2022,Customer_Name,,,,./input/generated_data1_target.csv,Anthony Jackson,Missing in Source
+9_9_01-12-2022,Segment,,,,./input/generated_data1_target.csv,Consumer,Missing in Source
+9_9_01-12-2022,Country,,,,./input/generated_data1_target.csv,United States,Missing in Source
+9_9_01-12-2022,City,,,,./input/generated_data1_target.csv,Baxterton,Missing in Source
+9_9_01-12-2022,State,,,,./input/generated_data1_target.csv,Delaware,Missing in Source
+9_9_01-12-2022,Region,,,,./input/generated_data1_target.csv,South,Missing in Source
+9_9_01-12-2022,Product_ID,,,,./input/generated_data1_target.csv,93a1a01e-82c0-4db7-8cdd-d281f4ed5e5f,Missing in Source
+9_9_01-12-2022,Category,,,,./input/generated_data1_target.csv,Office Supplies,Missing in Source
+9_9_01-12-2022,Sub_Category,,,,./input/generated_data1_target.csv,film,Missing in Source
+9_9_01-12-2022,Product_Name,,,,./input/generated_data1_target.csv,integrate distributed convergence,Missing in Source
+9_9_01-12-2022,Sales,,,,./input/generated_data1_target.csv,432.04,Missing in Source
+9_9_01-12-2022,Quantity,,,,./input/generated_data1_target.csv,3,Missing in Source
+9_9_01-12-2022,Profit,,,,./input/generated_data1_target.csv,107.86,Missing in Source
+9_9_01-12-2022,Returns,,,,./input/generated_data1_target.csv,and,Missing in Source
+9_9_01-12-2022,Payment_Mode,,,,./input/generated_data1_target.csv,Cards,Missing in Source
+9_9_01-12-2022,ind1,,,,./input/generated_data1_target.csv,,Missing in Source
+9_9_01-12-2022,ind2,,,,./input/generated_data1_target.csv,,Missing in Source

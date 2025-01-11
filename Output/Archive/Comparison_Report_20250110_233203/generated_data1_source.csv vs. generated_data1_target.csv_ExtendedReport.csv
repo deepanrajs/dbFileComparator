@@ -1,0 +1,7 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+3_087f3ff7-c19b-4ef7-96e5-5510b7b524c,Ship_Date,./input/generated_data1_source.csv,30-09-2022,./input/generated_data1_target.csv,30-09-2023,Mismatch
+4_301b5800-f6e5-4bf3-bfd6-90b29bee7d5,Ship_Date,./input/generated_data1_source.csv,13-05-2022,./input/generated_data1_target.csv,13-05-2021,Mismatch
+1_31cb2ae7-7c4f-444c-b0bb-ffdddc0cd2f,Order_Date,./input/generated_data1_source.csv,03-01-2024,./input/generated_data1_target.csv,03-01-2023,Mismatch
+2_40878a8b-4292-4b70-a22a-a468b2fc73a,Order_Date,./input/generated_data1_source.csv,13-02-2024,./input/generated_data1_target.csv,13-02-2023,Mismatch
+99_80cfa075-4bfe-4f01-9855-a4e72efb37c,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
+100_80cfa075-4bfe-4f01-9855-a4e72efb37c,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source

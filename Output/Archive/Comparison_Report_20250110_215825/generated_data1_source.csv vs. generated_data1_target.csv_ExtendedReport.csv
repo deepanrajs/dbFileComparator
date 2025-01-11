@@ -1,0 +1,4 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+Row_ID_O6G3A1_R3_40878a8b-4292-4b70-a22a-a468b2fc73a,Order_Date,./input/generated_data1_source.csv,2024-02-13,./input/generated_data1_target.csv,2024-02-12,Mismatch
+Row_ID_O6G3A1_R1_31cb2ae7-7c4f-444c-b0bb-ffdddc0cd2f,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
+Row_ID_O6G3A1_R2_cf721d8d-6371-4855-ac0c-3dd59293af8,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source

@@ -1,0 +1,45 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+11,Order_ID,10,
+11,Order_Date,23-10-2022,
+11,Ship_Date,12-10-2021,
+11,Ship_Mode,Standard Class,
+11,Customer_ID,59c9f156-d157-42d1-af17-121854763a1f,
+11,Customer_Name,William Yang,
+11,Segment,Corporate,
+11,Country,United States,
+11,City,West Jenniferport,
+11,State,Louisiana,
+11,Region,North,
+11,Product_ID,9a68e96c-6531-473e-92e2-daac5431da63,
+11,Category,Office Supplies,
+11,Sub_Category,bag,
+11,Product_Name,integrate transparent systems,
+11,Sales,811.61,
+11,Quantity,4,
+11,Profit,69.93,
+11,Returns,,
+11,Payment_Mode,Cash,
+11,ind1,,
+11,ind2,,
+12,Order_ID,,10
+12,Order_Date,,23-10-2022
+12,Ship_Date,,12-10-2021
+12,Ship_Mode,,Standard Class
+12,Customer_ID,,59c9f156-d157-42d1-af17-121854763a1f
+12,Customer_Name,,William Yang
+12,Segment,,Corporate
+12,Country,,United States
+12,City,,West Jenniferport
+12,State,,Louisiana
+12,Region,,North
+12,Product_ID,,9a68e96c-6531-473e-92e2-daac5431da63
+12,Category,,Office Supplies
+12,Sub_Category,,bag
+12,Product_Name,,integrate transparent systems
+12,Sales,,811.61
+12,Quantity,,4
+12,Profit,,69.93
+12,Returns,,
+12,Payment_Mode,,Cash
+12,ind1,,
+12,ind2,,

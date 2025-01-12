@@ -1,0 +1,4 @@
+Compare|Source|Source_Key|Source_Delimiter|Target|Target_Key|Target_Delimiter|columns_excluded
+Y|./Input/mssql_src_salesDataSet_Target.csv||,|salesDataSet_target||,|
+Y|./Input/mssql_src_salesDataSet_Target.csv|Row_ID_O6G3A1_R6|,|salesDataSet_target|Row_ID_O6G3A1_R6|,|
+Y|./Input/mssql_src_salesDataSet_Target.csv|Row_ID_O6G3A1_R6~Order_id|,|salesDataSet_target|Row_ID_O6G3A1_R6~Order_id|,|

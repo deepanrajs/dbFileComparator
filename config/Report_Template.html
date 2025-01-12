@@ -39,9 +39,9 @@
     let srctable = txModel.source;
     let tgttable = txModel.target;
     let ext_rep = txModel.report_path;
-    let sourceDups = txModel.s_dups;
-    let targetDups = txModel.t_dups;
-    let totalDuplicates = sourceDups + targetDups
+    let sourceDup = txModel.s_dup;
+    let targetDup = txModel.t_dup;
+    let totalDuplicates = sourceDup + targetDup
     /*var skippedNo = totalNo - executedNo;
     var totalValue = totalNo;
 */
@@ -131,8 +131,8 @@
     $('.mismatchTx').text(totalMismatches +" | "+ srcOnlyTx +"Src : "+tgtOnlyTx+"Tgt");
     $('.matchTx').text(matchedTx);
     $('.unmatchTx').text(nonMatchedTx);
-    $('.repPathTx').text(ext_rep);
-    $('.duplicatesTx').text(totalDuplicates +" | "+ sourceDups +"Src : "+ targetDups+"Tgt");
+    $('.repPathTx').attr('href', ext_rep).text("Click here");
+    $('.duplicatesTx').text(totalDuplicates +" | "+ sourceDup +"Src : "+ targetDup+"Tgt");
 
     //Result Accordian
     $(".toggle-accordion").on("click", function () {
@@ -243,8 +243,7 @@
         </div>
     </div>
     <div>
-        <span class="statsCount">Extended Report Path: <a class="counter repPathTx"
-                                                          href="Extended_Report.csv"></a></span>
+        <span class="statsCount">Extended Report Path: <a class="counter repPathTx"></a></span>
     </div>
 </main>
 <footer>

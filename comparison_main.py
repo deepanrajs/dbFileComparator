@@ -1,13 +1,13 @@
+import datetime
 import logging
 import os.path
 import sys
+import time
 
 import configReader
 import csv_vs_csv
 import csv_vs_db
 import db_vs_db
-import time
-import datetime
 
 
 def main():
@@ -22,21 +22,21 @@ def main():
     config = configReader.load_config(config_file)
 
     # Get comparison type from the config
-    source = config.get('comparison','source')
-    target = config.get('comparison','target')
+    source = config.get('comparison', 'source')
+    target = config.get('comparison', 'target')
 
     # Call respective functions based on source and target
     if source.upper().startswith('CSV_') and target.upper().startswith('CSV_'):
         print('\tComparing CSV vs. CSV...')
         # csv_vs_csv.comparison(config)
-        csv_vs_csv.comparison(config,output_directory)
+        csv_vs_csv.comparison(config, output_directory)
     elif source.upper().startswith('DB_') and target.upper().startswith('DB_'):
         print('\tComparing DB vs. DB')
-        db_vs_db.comparison(config,output_directory)
+        db_vs_db.comparison(config, output_directory)
     elif ((source.upper().startswith('CSV_') and target.upper().startswith('DB_'))
           or (source.upper().startswith('DB_') and target.upper().startswith('CSV_'))):
         print('\tComparing CSV vs. DB')
-        csv_vs_db.comparison(config,output_directory)
+        csv_vs_db.comparison(config, output_directory)
     else:
         sys.exit('Unsupported comparison type. Please check the config.')
     return log_file_name

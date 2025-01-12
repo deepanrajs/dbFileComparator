@@ -2,7 +2,7 @@ import csv_vs_csv
 import mssqlConnect
 
 
-def comparison(config):
+def comparison(config,output_directory):
     s_section = config['comparison']['source']
     t_section = config['comparison']['target']
     s_key = config.get(s_section, 'key')

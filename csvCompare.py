@@ -2,16 +2,9 @@ import csv
 import datetime
 import os
 import sys
-from functools import total_ordering
-
 import numpy as np
 import pandas as pd
-
 import reportHTML
-
-current_datetime = datetime.datetime.now()
-formatted_datetime = current_datetime.strftime('%Y%m%d_%H%M%S')
-output_directory = './Output/Comparison_Report_' + formatted_datetime
 
 
 def get_key(key):
@@ -119,34 +112,42 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
 
     if ',' in s_key and ',' in t_key:
         # Handling composite keys when multiple keys are specified
-        s_key_columns = [key.strip() for key in s_key.split(',')]
-        t_key_columns = [key.strip() for key in t_key.split(',')]
+        s_key_columns = [key.strip().lower() for key in s_key.split(',')]
+        t_key_columns = [key.strip().lower() for key in t_key.split(',')]
         print('\t\t\tMultiple Primary Keys provided, generating Composite Keys')
 
         # Ensure all composite key columns exist in the source and target datasets
         for col in s_key_columns:
-            if col not in source_data.columns:
+            if col not in [c.lower() for c in source_data.columns]:
                 raise KeyError(f'Column {col} not found in source data.')
         for col in t_key_columns:
-            if col not in target_data.columns:
+            if col not in [c.lower() for c in target_data.columns]:
                 raise KeyError(f'Column {col} not found in target data.')
 
-        # Create composite keys for source and target data
-        source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join, axis=1)
-        target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join, axis=1)
+            # Normalize source and target column names to lower case for composite key creation
+            source_data.columns = [col.lower() for col in source_data.columns]
+            target_data.columns = [col.lower() for col in target_data.columns]
 
-        # Use the composite keys as indices
-        source_data.set_index('composite_key', inplace=True)
-        target_data.set_index('composite_key', inplace=True)
+            # Create composite keys for source and target data
+            source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join, axis=1)
+            target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join, axis=1)
+
+            # Use the composite keys as indices
+            source_data.set_index('composite_key', inplace=True)
+            target_data.set_index('composite_key', inplace=True)
 
     elif s_key and t_key:
         # Handling single primary key (fallback scenario)
         print('\t\t\tSingle Primary Key used for comparison')
-        s_key = [key.strip() for key in s_key.split(',')]
-        t_key = [key.strip() for key in t_key.split(',')]
+        s_key = [key.strip().lower() for key in s_key.split(',')]
+        t_key = [key.strip().lower() for key in t_key.split(',')]
 
         if len(s_key) != 1 or len(t_key) != 1:
             raise ValueError('Provide a single primary key for single-key comparison.')
+
+        # Normalize source and target column names to lower case
+        source_data.columns = [col.lower() for col in source_data.columns]
+        target_data.columns = [col.lower() for col in target_data.columns]
 
         source_data.set_index(s_key[0], inplace=True)
         target_data.set_index(t_key[0], inplace=True)
@@ -176,15 +177,20 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     t_columns = []
 
     os.makedirs(output_directory, exist_ok=True)
-    ext_report = open(output_directory + '\\'+ extended_report, 'w')
+    fileName = os.path.basename(s_file) + ' vs. ' + os.path.basename(t_file)
+
+    if isFeeder.upper() == 'Y' or isFolderComparison == 'Y':  # HERE
+        fileName = counter + '_' + fileName
+
+    ext_report = open(output_directory + '\\'+ fileName + '_' +extended_report, 'w')
     ext_report.write('KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS' + '\n')
 
-    for column in source_data.columns:
-        if column not in s_columns_excluded:
-            s_columns.append(column)
-    for column in target_data.columns:
-        if column not in t_columns_excluded:
-            t_columns.append(column)
+    for scolumn in source_data.columns:
+        if scolumn not in s_columns_excluded:
+            s_columns.append(scolumn)
+    for tcolumn in target_data.columns:
+        if tcolumn not in t_columns_excluded:
+            t_columns.append(tcolumn)
 
     source_keys = set(source_data.index)  # Convert source keys to a set
     target_keys = set(target_data.index)  # Convert target keys to a set
@@ -239,7 +245,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                         if s_row[s_column] != t_row[t_column]:
                             row_mismatches += 1  # Increment the mismatch count for this row
                             total_mismatches += 1  # Increment the overall mismatch count
-                            ext_report.write(get_key(key) + ',' + str(column) + ',' +
+                            ext_report.write(get_key(key) + ',' + str(s_column) + ',' +
                                              s_file + ',' + str(s_row[s_column]) + ',' +
                                              t_file + ',' + str(t_row[t_column]) + ', Mismatch' + '\n')
         if row_mismatches > 0:  # If there were any mismatches in the row
@@ -248,10 +254,10 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
             matched_records += 1  # If no mismatches, it's a matched record
 
     for key in unmatched_source_keys:
-        ext_report.write(f'{get_key(key)},,,{s_file},,,Missing in Target\n')
+        ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Target\n')
 
     for key in unmatched_target_keys:
-        ext_report.write(f'{get_key(key)},,,{s_file},,,Missing in Source\n')
+        ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Source\n')
     ext_report.close()
     print('\nComparison Stats: ')
     print('\tTotal Record Count: ')
@@ -268,6 +274,6 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     print('\t\t-> Target: ', target_duplicate_count)
 
     reportHTML.create_html_report(source_record_count,target_record_count,matched_records,mismatched_records,
-                                  records_in_source_only, records_in_target_only,html_report,output_directory,
+                                  records_in_source_only, records_in_target_only,fileName+'_'+html_report,output_directory,
                                   s_file, t_file, os.path.abspath(extended_report) ,'', source_duplicate_count,
                                   target_duplicate_count)

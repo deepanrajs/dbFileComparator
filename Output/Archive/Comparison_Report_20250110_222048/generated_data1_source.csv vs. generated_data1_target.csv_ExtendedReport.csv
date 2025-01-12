@@ -1,3 +1,0 @@
-KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
-99,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
-100,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source

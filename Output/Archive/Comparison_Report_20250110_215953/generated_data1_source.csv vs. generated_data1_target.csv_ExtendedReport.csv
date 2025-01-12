@@ -1,4 +1,0 @@
-KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
-Row_ID_O6G3A1_R3,Order_Date,./input/generated_data1_source.csv,2024-02-13,./input/generated_data1_target.csv,2024-02-12,Mismatch
-Row_ID_O6G3A1_R1,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
-Row_ID_O6G3A1_R2,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source

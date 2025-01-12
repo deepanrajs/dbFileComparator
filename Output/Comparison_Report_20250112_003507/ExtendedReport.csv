@@ -1,2 +1,0 @@
-KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
-7_7_02-01-2022,ind2,./input/generated_data1_source.csv,5054a701-7e11-44c5-ae33-286db90a072f,./input/generated_data1_target.csv,4054a701-7e11-44c5-ae33-286db90a072fMismatch

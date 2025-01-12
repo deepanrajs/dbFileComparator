@@ -1,7 +1,0 @@
-KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
-8,Ship_Date,./input/generated_data1_source.csv,30-04-2023,./input/generated_data1_target.csv,30-04-2024
-9,Row_ID_O6G3A1_R6,./input/generated_data1_source.csv,10,./input/generated_data1_target.csv,14
-10,Row_ID_O6G3A1_R6,./input/generated_data1_source.csv,11,./input/generated_data1_target.csv,12
-11,Row_ID_O6G3A1_R6,./input/generated_data1_source.csv,11,./input/generated_data1_target.csv,13
-11,Order_Date,./input/generated_data1_source.csv,23-10-2023,./input/generated_data1_target.csv,23-10-2022
-11,Ship_Mode,./input/generated_data1_source.csv,Standard Calass,./input/generated_data1_target.csv,Standard Class

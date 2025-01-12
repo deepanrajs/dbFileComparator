@@ -1,16 +1,11 @@
 import csv
-import datetime
 import os
-
+import sys
 import numpy as np
 import pandas as pd
-from pandas.core.interchange.from_dataframe import primitive_column_to_ndarray
+from numpy.matlib import empty
 
 import reportHTML
-
-current_datetime = datetime.datetime.now()
-formatted_datetime = current_datetime.strftime('%Y%m%d_%H%M%S')
-output_directory = './Output/Comparison_Report_' + formatted_datetime
 
 
 def get_key(key):
@@ -22,8 +17,7 @@ def get_key(key):
     else:
         return str(key)
 
-
-def comparison(config):
+def comparison(config, output_directory):
     _,s_section = config['comparison']['source'].split('_', 1)
     _,t_section = config['comparison']['target'].split('_', 1)
     s_file = config[s_section]['file_path']
@@ -39,23 +33,25 @@ def comparison(config):
     # Feeder Comparison
     isFeeder = config.get('comparison', 'isFeeder')
     if isFeeder.upper() == 'Y':
+        print('\n\t\tFeeder File Comparison')
         feederFileName = config.get('comparison', 'feederFileName')
         feederFileDelimiter = config.get('comparison', 'feederFileDelimiter')
-        print('\tFeeder File Name: ', feederFileName)
+        print('\t\t\tFeeder File Name: ', feederFileName)
         with open('./config/'+feederFileName, 'r') as f:
             reader = list(csv.DictReader(f, delimiter=feederFileDelimiter))
             total_lines = len(reader)
-            print(f'\n\tTotal entries in the feeder file: {total_lines}')
+            print(f'\t\t\t\tTotal entries in the feeder file: {total_lines}')
             # Count lines where Compare = Y
             flaggedFiles = sum(1 for row in reader if row['Compare'].strip().upper() == 'Y')
-            print(f'\t\tProceeding with comparison for {flaggedFiles} selected entries.')
+            print(f'\t\t\tProceeding with comparison for {flaggedFiles} selected entries.')
             counter = 0
             for idx, row in enumerate(reader, start=1):
                 if None in row:
                     del row[None]
                 compare = row['Compare'].strip().lower()
+                counter += 1
                 if compare.upper() == 'Y':
-                    counter += 1
+                    print("\n\nComparing Feeder Row: ", counter)
                     s_file = row['Source'].strip()
                     s_key = row['Source_Key'].strip()
                     s_delimiter = row['Source_Delimiter'].strip()
@@ -65,7 +61,8 @@ def comparison(config):
                     t_delimiter = row['Target_Delimiter'].strip()
                     t_columns_excluded = row['columns_excluded'].strip()
                     compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded,
-                                t_columns_excluded, html_report, extended_report, isFeeder.upper(), str(idx))
+                                t_columns_excluded, html_report, extended_report, output_directory, isFeeder,
+                                str(idx), 'N')
     # CSV Folder comparison
     if isFeeder.upper() != 'Y' and os.path.isdir(s_file) and os.path.isdir(t_file):
         print('\nFolder comparison')
@@ -83,204 +80,213 @@ def comparison(config):
                 if source_file.strip() == target_file.strip():
                     comparison_count += 1  # Increment the successful comparison count
                     print(
-                        f'\tComparing {comparison_count}/{total_comparisons} - source_file: {source_file} | target_file: {target_file}')
-                    compare_csv(s_file+'/'+source_file, t_file+'/'+target_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded,
-                                t_columns_excluded, html_report, extended_report,'',str(comparison_count), 'Y')
+                        f'\tComparing {comparison_count}/{total_comparisons} - '
+                        f'source_file: {source_file} | target_file: {target_file}')
+                    compare_csv(s_file+'/'+source_file, t_file+'/'+target_file, s_key, t_key, s_delimiter,
+                                t_delimiter, s_columns_excluded, t_columns_excluded, html_report, extended_report,
+                                output_directory,'N', str(comparison_count), 'Y')
 
     if isFeeder.upper() != 'Y' and not os.path.isdir(s_file) and not os.path.isdir(t_file):
         print('\n\t\tIndividual File Comparison')
-        # print(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
-        #          html_report, extended_report)
+        print(f'\t\t\tComparing Source: \'{s_file}\' and Target: \'{t_file}\'')
         compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
-                html_report, extended_report)
-
+                html_report, extended_report, output_directory,'Y','','')
 
 def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
-                html_report, extended_report, isFeeder = 'N', counter = '', isFolderComparison = ''):
-    try:
-        source_data = pd.read_csv(os.path.abspath(s_file), sep=s_delimiter, encoding_errors='ignore',
-                                  na_filter=True)
-        target_data = pd.read_csv(os.path.abspath(t_file), sep=t_delimiter, encoding_errors='ignore',
-                                  na_filter=True)
-        source_data = source_data.replace(np.nan, '')
-        target_data = target_data.replace(np.nan, '')
-        if ',' in s_key and t_key:
-            s_key_columns = [key.strip() for key in s_key.split(',')]
-            t_key_columns = [key.strip() for key in t_key.split(',')]
-            print('\t\t\tMultiple Primary Key provided, generating Composite Key')
-            for col in s_key_columns:
-                if col not in source_data.columns:
-                    raise KeyError(f"Column '{col}' not found in source data.")
-            for col in t_key_columns:
-                if col not in target_data.columns:
-                    raise KeyError(f"Column '{col}' not found in target data.")
+                html_report, extended_report, output_directory, isFeeder = 'N', counter = '', isFolderComparison = '',
+                isLookup = ''):
+
+    source_data = pd.read_csv(s_file, sep=s_delimiter, encoding_errors='ignore')
+    target_data = pd.read_csv(t_file, sep=t_delimiter, encoding_errors='ignore')
+
+    source_record_count = len(source_data)
+    target_record_count = len(target_data)
+
+    s_key_columns = [key.strip() for key in s_key.split('~')]
+    t_key_columns = [key.strip() for key in t_key.split('~')]
+    if len(s_key_columns) != len(t_key_columns):
+        sys.exit(
+            f'Mismatch in the number of columns for primary/composite keys. '
+            f'Source key has {len(s_key_columns)} column(s), while Target key has {len(t_key_columns)} column(s).'
+        )
+
+    if '~' in s_key and '~' in t_key:
+        # Handling composite keys when multiple keys are specified
+        s_key_columns = [key.strip().lower() for key in s_key.split('~')]
+        t_key_columns = [key.strip().lower() for key in t_key.split('~')]
+        print('\t\tMultiple Primary Keys provided, generating Composite Keys')
+
+        # Ensure all composite key columns exist in the source and target datasets
+        for col in s_key_columns:
+            if col not in [c.lower() for c in source_data.columns]:
+                raise KeyError(f'Column {col} not found in source data.')
+        for col in t_key_columns:
+            if col not in [c.lower() for c in target_data.columns]:
+                raise KeyError(f'Column {col} not found in target data.')
+
+            # Normalize source and target column names to lower case for composite key creation
+            source_data.columns = [col.lower() for col in source_data.columns]
+            target_data.columns = [col.lower() for col in target_data.columns]
+
             # Create composite keys for source and target data
             source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join, axis=1)
             target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join, axis=1)
-            # print("Source Composite Keys:", source_data['composite_key'])
-            # print("Target Composite Keys:", target_data['composite_key'])
-            source_data.set_index(s_key_columns, inplace=True)
-            target_data.set_index(t_key_columns, inplace=True)
 
-        elif s_key == '' and t_key == '':
-            print("\t\t\tNo Primary Key specified, moving to Row comparison")
-            sColumnList = list(source_data.columns)
-            tColumnList = list(target_data.columns)
-            source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join,
-                                                                                    axis=1)  # Combine columns in s_key
-            target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join,
-                                                                                    axis=1)  # Combine columns in t_key
-            source_data.set_index(sColumnList, inplace=True)
-            target_data.set_index(tColumnList, inplace=True)
-        else:
-            s_key = [key.strip() for key in s_key.split(',')]
-            t_key = [key.strip() for key in t_key.split(',')]
-            print("\t\t\tSingle Primary Key used for comparison")
-            source_data.set_index(s_key, inplace=True)
-            target_data.set_index(t_key, inplace=True)
-            source_data['composite_key'] = source_data.index.astype(str)
-            target_data['composite_key'] = target_data.index.astype(str)
-        # Duplicate check for source and target composite keys
-        source_duplicates = source_data[source_data[s_key].duplicated()]
-        target_duplicates = target_data[target_data[t_key].duplicated()]
-        source_record_count = len(source_data)
-        target_record_count = len(target_data)
+            # Use the composite keys as indices
+            source_data.set_index('composite_key', inplace=True)
+            target_data.set_index('composite_key', inplace=True)
 
-        source_duplicate_count =int((len(source_duplicates))/2)
-        target_duplicate_count = int((len(target_duplicates))/2)
 
-        if not source_duplicates.empty or not target_duplicates.empty:
-            print(f'\t\tDuplicate records detected. '
-                  f'A total of {source_duplicate_count} duplicates in source and {target_duplicate_count} duplicates in target found. Please address these before continuing.'
-                  f'\n\t\t\tExecuting fallback mechanism to remove duplicates before proceeding with comparison.'
-                  f'\n\t\t\t\tNote: The output might not be as expected.\n')
-            source_data = source_data.drop_duplicates()
-            target_data = target_data.drop_duplicates()
+    elif s_key == '' and t_key == '':
+        print('\t\tNo Primary Keys provided, generating Composite Keys using all the columns')
+        sColumnList = list(source_data.columns)
+        tColumnList = list(target_data.columns)
+        source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1)
+        target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join, axis=1)
+        source_data.set_index('composite_key', inplace=True)
+        target_data.set_index('composite_key', inplace=True)
 
-        s_columns = []
-        t_columns = []
-        os.makedirs(output_directory, exist_ok=True)
-        fileName = os.path.basename(s_file) + ' vs. ' + os.path.basename(t_file)
-        if isFeeder.upper() == 'Y' or isFolderComparison == 'Y':  #HERE
-            fileName = counter + '_' + fileName
-            ext_report = open(output_directory + '/' + fileName + '_' + extended_report, 'w')
-        else:
-            ext_report = open(output_directory + '/' + fileName + '_' + extended_report, 'w')
-        ext_report_abs = os.path.abspath(output_directory + '/' + fileName + '_' + extended_report)
-        ext_report.write('KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS' + '\n')
-        # ext_report.write(source_duplicates + ',' + str(column) + ',' + s_file + ',' + str(s_row[column]) + ',' +
-        #                  t_file + ',' + str(t_row[column]) + ',Mismatch\n')
-        for column in source_data.columns:
-            if column not in s_columns_excluded:
-                s_columns.append(column)
-        for column in target_data.columns:
-            if column not in t_columns_excluded:
-                t_columns.append(column)
+    elif s_key and t_key:
+        # Handling single primary key (fallback scenario)
+        print('\t\tSingle Primary Key used for comparison')
+        s_key = [key.strip().lower() for key in s_key.split(',')]
+        t_key = [key.strip().lower() for key in t_key.split(',')]
 
-        source_keys = set(source_data.index)  # Convert source keys to a set
-        target_keys = set(target_data.index)  # Convert target keys to a set
-        # print('source_keys * target_keys', source_keys, target_keys)
+        if len(s_key) != 1 or len(t_key) != 1:
+            raise ValueError('Provide a single primary key for single-key comparison.')
 
-        matched_keys = source_keys & target_keys  # Intersection of source and target keys (matched)
-        unmatched_source_keys = source_keys - matched_keys  # Source keys that do not match
-        unmatched_target_keys = target_keys - matched_keys  # Target keys that do not match
+        # Normalize source and target column names to lower case
+        source_data.columns = [col.lower() for col in source_data.columns]
+        target_data.columns = [col.lower() for col in target_data.columns]
 
-        # Initialize counters
-        matched_records = 0
-        mismatched_records = 0
-        records_in_source_only = len(unmatched_source_keys)
-        records_in_target_only = len(unmatched_target_keys)
-        # print('Matched keys: ', matched_keys)
-        # Compare matched keys row by row and column by column
-        total_mismatches = 0
-        for key in matched_keys:
-            if isinstance(key, (tuple, list)):
-                composite_key = "_".join(map(str, key))
-                s_row = source_data[source_data['composite_key'] == composite_key]
-                t_row = target_data[target_data['composite_key'] == composite_key]
-            else:
-                composite_key = key
-                s_row = source_data.loc[key]
-                t_row = target_data[target_data['composite_key'] == composite_key]
+        source_data.set_index(s_key[0], inplace=True)
+        target_data.set_index(t_key[0], inplace=True)
 
-            # Ensure you're only comparing rows (should be a single row per key)
-            if not s_row.empty and not t_row.empty:
-                print('s_row before: ', s_row)
-                print('t_row before: ', t_row)
-                s_row = s_row.iloc[0]  # Extract the first row
-                t_row = t_row.iloc[0]  # Extract the first row
-                print('s_row after: ', s_row)
-                print('t_row after: ', t_row)
-                row_mismatches = 0  # Track mismatches for this row
-                # Compare each column in the matched rows
-                for column in s_columns:
-                    if column in t_columns:
-                        if s_row[column] != t_row[column]:  # If values don't match
+        source_data['composite_key'] = source_data.index.astype(str)
+        target_data['composite_key'] = target_data.index.astype(str)
+
+    else:
+        # If no keys are provided, fallback to row comparison
+        sColumnList = list(source_data.columns)
+        tColumnList = list(target_data.columns)
+
+        source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1)
+        target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join, axis=1)
+
+        source_data.set_index('composite_key', inplace=True)
+        target_data.set_index('composite_key', inplace=True)
+
+    source_data = source_data.replace(np.nan, '')
+    target_data = target_data.replace(np.nan, '')
+
+    matched_records = 0
+    mismatched_records = 0
+
+    s_columns = []
+    t_columns = []
+
+    os.makedirs(output_directory, exist_ok=True)
+    fileName = os.path.basename(s_file) + ' vs. ' + os.path.basename(t_file)
+
+    if isFeeder.upper() == 'Y' or isFolderComparison.upper() == 'Y' or isLookup.upper() == 'Y':  # HERE
+        fileName = counter + '_' + fileName
+
+    ext_report = open(output_directory + '\\'+ fileName + '_' +extended_report, 'w')
+    ext_report.write('KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS' + '\n')
+
+    for scolumn in source_data.columns:
+        if scolumn not in s_columns_excluded:
+            s_columns.append(scolumn)
+    for tcolumn in target_data.columns:
+        if tcolumn not in t_columns_excluded:
+            t_columns.append(tcolumn)
+
+    source_keys = set(source_data.index)  # Convert source keys to a set
+    target_keys = set(target_data.index)  # Convert target keys to a set
+
+    matched_keys = source_keys & target_keys  # Intersection of source and target keys (matched)
+    unmatched_source_keys = source_keys - matched_keys  # Source keys that do not match
+    unmatched_target_keys = target_keys - matched_keys  # Target keys that do not match
+
+    records_in_source_only = len(unmatched_source_keys)
+    records_in_target_only = len(unmatched_target_keys)
+
+    source_data['composite_key'] = source_data.index
+    target_data['composite_key'] = target_data.index
+    # Duplicate check for source and target composite keys
+
+
+    source_duplicates_initial = source_data[source_data.duplicated(subset=['composite_key'], keep=False)]
+    target_duplicates_initial = target_data[target_data.duplicated(subset=['composite_key'], keep=False)]
+    source_duplicate_count = int(len(source_duplicates_initial)/2)
+    target_duplicate_count = int(len(target_duplicates_initial)/2)
+
+    if len(source_duplicates_initial)>0 or len(target_duplicates_initial)>0:
+        print(f'\t\t\tDuplicate Records detected. '
+              f'Executing fall back mechanism to remove duplicates if entire row is duplicated.')
+
+        source_data = source_data.drop_duplicates()
+        target_data = target_data.drop_duplicates()
+
+        source_duplicates = source_data[source_data.duplicated(subset=['composite_key'], keep=False)]
+        target_duplicates = target_data[target_data.duplicated(subset=['composite_key'], keep=False)]
+
+        if len(source_duplicates)>0 or len(target_duplicates)>0:
+            print(f'\n\t\t\tKey duplicates still identified. Attempted fallback mechanism to remove fully identical rows.'
+                  f'\n\t\t\tHowever, duplicate keys with differing values still exist:'
+                  f'\n\t\t\t\tSource Duplicates: {int(len(source_duplicates)/2)}'
+                  f'\n\t\t\t\tTarget Duplicates: {int(len(target_duplicates)/2)}'
+                  f'\n\t\t\tPlease ensure unique keys in your data before proceeding.')
+
+            sys.exit('\nProgram terminated due to duplicate keys.')
+
+    print('\nStarting data comparison...')
+    for key in matched_keys:
+        s_row = source_data.loc[key]
+        t_row = target_data.loc[key]
+
+        if not s_row.empty and not t_row.empty:
+            row_mismatches = 0
+            total_mismatches = 0
+            for s_column in s_columns:
+                for t_column in t_columns:
+                    if s_column == t_column:
+                        if s_row[s_column] != t_row[t_column]:
                             row_mismatches += 1  # Increment the mismatch count for this row
                             total_mismatches += 1  # Increment the overall mismatch count
-                            ext_report.write(get_key(key) + ',' + str(column) + ',' +
-                                             s_file + ',' + str(s_row[column]) + ',' +
-                                             t_file + ',' + str(t_row[column]) + ',Mismatch\n')
+                            ext_report.write(get_key(key) + ',' + str(s_column) + ',' +
+                                             s_file + ',' + str(s_row[s_column]) + ',' +
+                                             t_file + ',' + str(t_row[t_column]) + ', Mismatch' + '\n')
+        if row_mismatches > 0:  # If there were any mismatches in the row
+            mismatched_records += 1  # Count this row as a mismatched record
+        else:
+            matched_records += 1  # If no mismatches, it's a matched record
 
-                if row_mismatches > 0:  # If there were any mismatches in the row
-                    mismatched_records += 1  # Count this row as a mismatched record
-                else:
-                    matched_records += 1  # If no mismatches, it's a matched record
+    for key in unmatched_target_keys:
+        ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Source\n')
 
-        # Process unmatched records (source only and target only)
-        # Source-only records (present in source but not in target)
-        for s_index in unmatched_source_keys:
-            # s_row = source_data.loc[s_index]
-            ext_report.write(get_key(s_index) + ',' + ',' +
-                             s_file + ',,' + t_file + ',,' + 'Missing in Target\n')
-            # for column in s_columns:
-            #     ext_report.write(get_key(s_index) + ',' + str(column) + ',' +
-            #                      s_file + ',' + str(s_row[column]) + ',' + '\n')
+    for key in unmatched_source_keys:
+        ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Target\n')
 
-        # Target-only records (present in target but not in source)
-        for t_index in unmatched_target_keys:
-            # t_row = target_data.loc[t_index]
-            ext_report.write(get_key(t_index) + ',' + ',' +
-                             s_file + ',,' + t_file + ',,' + 'Missing in Source\n')
-            # for column in t_columns:
-            #     ext_report.write(get_key(t_index) + ',' + str(column) + ',' + ',' + str(t_row[column]) + ',,\n')
+    ext_report.close()
+    print('\nComparison Stats: ')
+    print('\tTotal Record Count: ')
+    print('\t\t-> Source: ', source_record_count)
+    print('\t\t-> Target: ', target_record_count)
+    print('\tRecords with matching primary/composite keys across Source and Target: ', len(matched_keys))
+    print('\t\t-> Matched Records: ', matched_records)
+    print('\t\t-> Mismatched Records: ', mismatched_records)
+    print('\tMissing Records: ')
+    print('\t\t-> Records present only in Source: ', records_in_source_only)
+    print('\t\t-> Records present only in Target: ', records_in_target_only)
+    print('\tDuplicate Records')
+    print('\t\t-> Source: ', source_duplicate_count)
+    print('\t\t-> Target: ', target_duplicate_count)
 
-        ext_report.close()
-        print("\n\t\tSummary of Comparison:")
-        print("\t\t\tComparison Stats:")
-        print(f"\t\t\t\tSource Records: {source_record_count}")
-        print(f"\t\t\t\tTarget Records: {target_record_count}")
-
-        print("\t\t\tComparison Results:")
-        print(f"\t\t\t\tMatched: {matched_records}")
-        print(f"\t\t\t\tMismatched: {mismatched_records}")
-
-        print("\t\t\tMissing Records:")
-        print(f"\t\t\t\tOnly in Source: {records_in_source_only}")
-        print(f"\t\t\t\tOnly in Target: {records_in_target_only}")
-
-        print("\t\t\tDuplicate Records:")
-        print(f"\t\t\t\tSource Duplicates: {source_duplicate_count}")
-        print(f"\t\t\t\tTarget Duplicates: {target_duplicate_count}")
-
-        reportHTML.create_html_report(source_record_count, target_record_count, matched_records, mismatched_records,
-                                      records_in_source_only, records_in_target_only, fileName+'_'+html_report,
-                                      output_directory,s_file, t_file, ext_report_abs, counter,
-                                      source_duplicate_count, target_duplicate_count)
-    except FileNotFoundError as fnf_error:
-        print(f'\nFile not found: {fnf_error}')
-    except ValueError as va_error:
-        print(f'\nValue error: {va_error}\n\tThe source and target data might have duplicate rows')
-    except Exception as error:
-        print(f'\nError: {error}')
-    comparison_summary = {
-        "source_record_count": source_record_count,
-        "target_record_count": target_record_count,
-        "matched_records": matched_records,
-        "mismatched_records": mismatched_records,
-        "records_in_source_only": records_in_source_only,
-        "records_in_target_only": records_in_target_only,
-        "source_duplicate_count": source_duplicate_count,
-        "target_duplicate_count": target_duplicate_count
-    }
-    return {"summary": comparison_summary}
+    reportHTML.create_html_report(source_record_count,target_record_count,matched_records,mismatched_records,
+                                  records_in_source_only, records_in_target_only,fileName+'_'+html_report,output_directory,
+                                  s_file, t_file, os.path.abspath(extended_report) ,'', source_duplicate_count,
+                                  target_duplicate_count)
+    return (source_record_count,target_record_count,matched_records,mismatched_records, records_in_source_only,
+            records_in_target_only,fileName+'_'+html_report,output_directory,s_file, t_file,
+            os.path.abspath(extended_report),'',source_duplicate_count,target_duplicate_count)

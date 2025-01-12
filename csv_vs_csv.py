@@ -3,7 +3,6 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-from numpy.matlib import empty
 
 import reportHTML
 
@@ -93,8 +92,7 @@ def comparison(config, output_directory):
                 html_report, extended_report, output_directory,'Y','','')
 
 def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
-                html_report, extended_report, output_directory, isFeeder = 'N', counter = '', isFolderComparison = '',
-                isLookup = ''):
+                html_report, extended_report, output_directory, isFeeder = 'N', counter = '', isFolderComparison = ''):
 
     source_data = pd.read_csv(s_file, sep=s_delimiter, encoding_errors='ignore')
     target_data = pd.read_csv(t_file, sep=t_delimiter, encoding_errors='ignore')
@@ -114,7 +112,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         # Handling composite keys when multiple keys are specified
         s_key_columns = [key.strip().lower() for key in s_key.split('~')]
         t_key_columns = [key.strip().lower() for key in t_key.split('~')]
-        print('\t\tMultiple Primary Keys provided, generating Composite Keys')
+        print('\n\t\tMultiple Primary Keys provided, generating Composite Keys')
 
         # Ensure all composite key columns exist in the source and target datasets
         for col in s_key_columns:
@@ -188,7 +186,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     os.makedirs(output_directory, exist_ok=True)
     fileName = os.path.basename(s_file) + ' vs. ' + os.path.basename(t_file)
 
-    if isFeeder.upper() == 'Y' or isFolderComparison.upper() == 'Y' or isLookup.upper() == 'Y':  # HERE
+    if isFeeder.upper() == 'Y' or isFolderComparison.upper() == 'Y':  # HERE
         fileName = counter + '_' + fileName
 
     ext_report = open(output_directory + '\\'+ fileName + '_' +extended_report, 'w')
@@ -269,7 +267,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Target\n')
 
     ext_report.close()
-    print('\nComparison Stats: ')
+    print('Comparison Stats: ')
     print('\tTotal Record Count: ')
     print('\t\t-> Source: ', source_record_count)
     print('\t\t-> Target: ', target_record_count)

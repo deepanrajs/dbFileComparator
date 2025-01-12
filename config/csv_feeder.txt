@@ -1,0 +1,4 @@
+Compare|Source|Source_Key|Source_Delimiter|Target|Target_Key|Target_Delimiter|columns_excluded
+N|./input/generated_data1_source||,|./input/generated_data1_target.csv||,|
+Y|./input/generated_data1_source|Row_ID_O6G3A1_R6|,|./input/generated_data1_target.csv|Row_ID_O6G3A1_R6|,|
+Y|./input/generated_data1_source|Row_ID_O6G3A1_R6,Order_ID|,|./input/generated_data1_target.csv|Row_ID_O6G3A1_R6,Order_ID|,|

@@ -1,5 +1,6 @@
 import logging
 import os.path
+import sys
 
 import configReader
 import csv_vs_csv
@@ -34,10 +35,10 @@ def main():
         db_vs_db.comparison(config,output_directory)
     elif ((source.upper().startswith('CSV_') and target.upper().startswith('DB_'))
           or (source.upper().startswith('DB_') and target.upper().startswith('CSV_'))):
-        print('Comparing CSV vs. DB')
+        print('\tComparing CSV vs. DB')
         csv_vs_db.comparison(config,output_directory)
     else:
-        print('Unsupported comparison type. Please check the config.')
+        sys.exit('Unsupported comparison type. Please check the config.')
     return log_file_name
 
 

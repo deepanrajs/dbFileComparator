@@ -25,8 +25,6 @@ def connect(config, sectionHeader, tableName, output_directory, exportAsFile):
     database = config.get(sectionHeader, 'dbname')
     Username = config.get(sectionHeader, 'Username')
     Password = config.get(sectionHeader, 'Password')
-    # Establish connection to SSMS
-    # Connection string for QA instance.
     try:
         myConnection = pyodbc.connect(
             f"Driver={driver};"
@@ -37,16 +35,12 @@ def connect(config, sectionHeader, tableName, output_directory, exportAsFile):
             "Encrypt=no;TrustServerCertificate=yes;"
         )
         cursor = myConnection.cursor()
-        print("\tConnection established...")
+        print("\t\t\tConnection established...")
         query = "SELECT * FROM " + tableName
-        # print('query: ', query)
         cursor.execute(query)
         query_result = cursor.fetchall()
-        # print("query_result: ", query_result)
         header = [description[0] for description in cursor.description]
-        # print("header: ", header)
         if exportAsFile == 'Y':
-            print(f"\t\tExporting {sectionHeader} data to CSV")
             out_file = f"./{output_directory}/{sectionHeader}_{tableName}.csv"
             if query_result is not None and query_result:
                 write_query_results(out_file, delimiter, query_result, header)

@@ -2,7 +2,6 @@ import configparser
 import logging
 import os
 import sys
-from datetime import datetime
 
 
 def load_config(file_path):

@@ -188,8 +188,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
 
     if isFeeder.upper() == 'Y' or isFolderComparison.upper() == 'Y':  # HERE
         fileName = counter + '_' + fileName
-
-    ext_report = open(output_directory + '\\'+ fileName + '_' +extended_report, 'w')
+    abs_extended_report = output_directory + '\\'+ fileName + '_' +extended_report
+    ext_report = open(abs_extended_report, 'w')
     ext_report.write('KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS' + '\n')
 
     for scolumn in source_data.columns:
@@ -255,10 +255,10 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                             ext_report.write(get_key(key) + ',' + str(s_column) + ',' +
                                              s_file + ',' + str(s_row[s_column]) + ',' +
                                              t_file + ',' + str(t_row[t_column]) + ', Mismatch' + '\n')
-        if row_mismatches > 0:  # If there were any mismatches in the row
-            mismatched_records += 1  # Count this row as a mismatched record
-        else:
-            matched_records += 1  # If no mismatches, it's a matched record
+            if row_mismatches > 0:  # If there were any mismatches in the row
+                mismatched_records += 1  # Count this row as a mismatched record
+            else:
+                matched_records += 1  # If no mismatches, it's a matched record
 
     for key in unmatched_target_keys:
         ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Source\n')
@@ -283,7 +283,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
 
     reportHTML.create_html_report(source_record_count,target_record_count,matched_records,mismatched_records,
                                   records_in_source_only, records_in_target_only,fileName+'_'+html_report,output_directory,
-                                  s_file, t_file, os.path.abspath(extended_report) ,'', source_duplicate_count,
+                                  s_file, t_file, os.path.abspath(abs_extended_report) ,'', source_duplicate_count,
                                   target_duplicate_count)
     return (source_record_count,target_record_count,matched_records,mismatched_records, records_in_source_only,
             records_in_target_only,fileName+'_'+html_report,output_directory,s_file, t_file,

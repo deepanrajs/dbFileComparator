@@ -7,14 +7,6 @@ import mssqlConnect
 def comparison(config,output_directory):
     s_type, s_section = config.get('comparison','source').split('_', 1)
     t_type, t_section = config.get('comparison','target').split('_', 1)
-    if s_type.upper() == 'DB':
-        s_file = config.get(s_section, 'table_name')
-    elif s_type.upper() == 'CSV':
-        s_file = config.get(s_section, 'file_path')
-    if t_type.upper() == 'DB':
-        t_file = config.get(t_section, 'table_name')
-    elif t_type.upper() == 'CSV':
-        t_file = config.get(t_section, 'file_path')
     s_key = config.get(s_section, 'key')
     t_key = config.get(t_section, 'key')
     s_delimiter = config.get(s_section, 'delimiter')
@@ -58,27 +50,32 @@ def comparison(config,output_directory):
                         t_file = mssqlConnect.connect(config, t_section, t_file, output_directory, exportAsFile='Y')
                         csv_vs_csv.compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter,
                                                s_columns_excluded, t_columns_excluded,
-                                               html_report, extended_report, output_directory, 'Y', '', '')
+                                               html_report, extended_report, output_directory, 'Y',
+                                               str(idx))
 
                     if s_type.upper() == 'DB' and t_type == 'CSV':
                         print('\tSource DB and Target CSV')
                         s_file = mssqlConnect.connect(config, s_section, s_file, output_directory, exportAsFile='Y')
                         csv_vs_csv.compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter,
                                                s_columns_excluded, t_columns_excluded, html_report,
-                                               extended_report, output_directory, 'Y', '', '')
+                                               extended_report, output_directory, 'Y', str(idx))
     if isFeeder.upper() != 'Y':
         if s_type.upper() == 'CSV' and t_type == 'DB':
             print('\tSource CSV and Target DB')
             print(f"\t\tExporting {t_section} data to CSV")
-            t_file = mssqlConnect.connect(config, t_section, t_file, output_directory, exportAsFile='Y')
-            csv_vs_csv.compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter,
-                                   s_columns_excluded, t_columns_excluded,
-                                   html_report, extended_report, output_directory, 'Y', '', '')
+            s_file = config.get(s_section, 'file_path')
+            t_file = config.get(t_section, 'table_name')
+            t_file_name = mssqlConnect.connect(config, t_section, t_file, output_directory, exportAsFile='Y')
+            csv_vs_csv.compare_csv(s_file, t_file_name, s_key, t_key, s_delimiter, t_delimiter,
+                                   s_columns_excluded, t_columns_excluded, html_report, extended_report,
+                                   output_directory, 'Y')
 
         if s_type.upper() == 'DB' and t_type == 'CSV':
             print('\tSource DB and Target CSV')
             print(f"\t\tExporting {s_section} data to CSV")
-            s_file = mssqlConnect.connect(config, s_section, s_file, output_directory, exportAsFile='Y')
-            csv_vs_csv.compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter,
-                                   s_columns_excluded, t_columns_excluded, html_report,
-                                   extended_report, output_directory, 'Y', '', '')
+            s_file = config.get(s_section, 'table_name')
+            t_file = config.get(t_section, 'file_path')
+            s_file_name = mssqlConnect.connect(config, s_section, s_file, output_directory, exportAsFile='Y')
+            csv_vs_csv.compare_csv(s_file_name, t_file, s_key, t_key, s_delimiter, t_delimiter,
+                                   s_columns_excluded, t_columns_excluded, html_report, extended_report,
+                                   output_directory, 'Y')

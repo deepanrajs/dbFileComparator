@@ -1,0 +1,68 @@
+Reading Config...
+	Comparing CSV vs. CSV...
+
+		Feeder File Comparison
+			Feeder File Name:  csv_feeder.txt
+				Total entries in the feeder file: 3
+			Proceeding with comparison for 2 selected entries.
+
+
+		Comparing Feeder Row:  1
+			Source File: 'C:\Users\MITDeepanraj\PycharmProjects\dbFileComparator\input\generated_data1_source.csv
+				Source Key: 
+				Excluded Columns: 
+
+			Target File: 'C:\Users\MITDeepanraj\PycharmProjects\dbFileComparator\input\generated_data1_target.csv
+				Target Key: 
+				Excluded Columns: 
+
+			No Primary Keys provided, generating Composite Keys using all the columns
+
+		Starting data comparison...
+			Comparison Stats:
+				Total Record Count:
+					-> Source:  5
+					-> Target: 5
+				Records with matching primary/composite keys across Source and Target: 4 
+					-> Matched Records: 4
+					-> Mismatched Records: 0
+				Missing Records: 
+					-> Records present only in Source: 1
+					-> Records present only in Target: 1
+				Duplicate Records
+					-> Source: 0
+					-> Target:  0
+
+
+		Skipping Feeder Row:  2
+
+
+		Comparing Feeder Row:  3
+			Source File: 'C:\Users\MITDeepanraj\PycharmProjects\dbFileComparator\input\generated_data1_source.csv
+				Source Key: Row_ID_O6G3A1_R6,Order_ID
+				Excluded Columns: 
+
+			Target File: 'C:\Users\MITDeepanraj\PycharmProjects\dbFileComparator\input\generated_data1_target.csv
+				Target Key: Row_ID_O6G3A1_R6, Order_ID
+				Excluded Columns: 
+
+		Multiple Primary Keys provided, generating Composite Keys
+
+		Starting data comparison...
+			Comparison Stats:
+				Total Record Count:
+					-> Source:  5
+					-> Target: 5
+				Records with matching primary/composite keys across Source and Target: 5 
+					-> Matched Records: 4
+					-> Mismatched Records: 1
+				Missing Records: 
+					-> Records present only in Source: 0
+					-> Records present only in Target: 0
+				Duplicate Records
+					-> Source: 0
+					-> Target:  0
+
+Time taken: 00:00:00.120
+
+Log file saved at: C:\Users\MITDeepanraj\PycharmProjects\dbFileComparator\Output\Comparison_Report_20250115_214410\Compare_log_20250115_214410.log

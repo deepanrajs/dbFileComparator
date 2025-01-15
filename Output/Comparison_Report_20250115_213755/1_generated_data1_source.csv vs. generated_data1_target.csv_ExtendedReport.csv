@@ -1,0 +1,5 @@
+KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
+,Customer_ID,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source
+,Cust_ID,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
+2_2_13-02-2023_24-12-2024_Standard Class_558ec173-3bf6-4439-be9e-4190ba0f8731_Michael Cardenas DVM_Corporate_United States_Nicolebury_California_East_0ea97aa2-4342-4b74-9bbe-5073b2974866_Office Supplies_shoulder_aggregate interactive solutions_400.3_2_420.3_nan_Cards_nan_nan,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source
+2_2_13-02-2023_24-12-2024_StandardClass_558ec173-3bf6-4439-be9e-4190ba0f8731_Michael Cardenas DVM_Corporate_United States_Nicolebury_California_East_0ea97aa2-4342-4b74-9bbe-5073b2974866_Office Supplies_shoulder_aggregate interactive solutions_400.3_2_420.3_nan_Cards_nan_nan,,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target

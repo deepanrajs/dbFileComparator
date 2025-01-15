@@ -1,0 +1,11 @@
+2025-01-15 21:22:12,383 - ERROR - An error occurred: [Errno 2] No such file or directory: './input/generated_data1_source'
+Reading Config...
+	Comparing CSV vs. CSV...
+
+		Feeder File Comparison
+			Feeder File Name:  csv_feeder.txt
+				Total entries in the feeder file: 3
+			Proceeding with comparison for 2 selected entries.
+
+
+Comparing Feeder Row:  2

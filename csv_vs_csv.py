@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 import sys
 import numpy as np
@@ -26,7 +27,7 @@ def comparison(config, output_directory):
     s_delimiter = config[s_section]['delimiter']
     t_delimiter = config[t_section]['delimiter']
     s_columns_excluded = config[s_section]['columns_excluded']
-    t_columns_excluded = config[s_section]['columns_excluded']
+    t_columns_excluded = config[t_section]['columns_excluded']
     html_report = config['comparison']['html_report']
     extended_report = config['comparison']['extended_report']
     # Feeder Comparison
@@ -50,7 +51,7 @@ def comparison(config, output_directory):
                 compare = row['Compare'].strip().lower()
                 counter += 1
                 if compare.upper() == 'Y':
-                    print("\n\nComparing Feeder Row: ", counter)
+                    print("\n\n\t\tComparing Feeder Row: ", counter)
                     s_file = row['Source'].strip()
                     s_key = row['Source_Key'].strip()
                     s_delimiter = row['Source_Delimiter'].strip()
@@ -62,8 +63,11 @@ def comparison(config, output_directory):
                     compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded,
                                 t_columns_excluded, html_report, extended_report, output_directory, isFeeder,
                                 str(idx), 'N')
+                elif compare.upper() != 'Y':
+                    print("\n\n\t\tSkipping Feeder Row: ", counter)
+
     # CSV Folder comparison
-    if isFeeder.upper() != 'Y' and os.path.isdir(s_file) and os.path.isdir(t_file):
+    elif isFeeder.upper() != 'Y' and os.path.isdir(s_file) and os.path.isdir(t_file):
         print('\nFolder comparison')
         source_files = {f: os.path.join(s_file, f) for f in os.listdir(s_file) if
                           f.endswith('.csv')}
@@ -85,17 +89,29 @@ def comparison(config, output_directory):
                                 t_delimiter, s_columns_excluded, t_columns_excluded, html_report, extended_report,
                                 output_directory,'N', str(comparison_count), 'Y')
 
-    if isFeeder.upper() != 'Y' and not os.path.isdir(s_file) and not os.path.isdir(t_file):
+    elif isFeeder.upper() != 'Y' and not os.path.isdir(s_file) and not os.path.isdir(t_file):
         print('\n\t\tIndividual File Comparison')
-        print(f'\t\t\tComparing Source: \'{s_file}\' and Target: \'{t_file}\'')
         compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
                 html_report, extended_report, output_directory,'Y','','')
+
+    else:
+        print("\n")
+        logging.error("Check Source and Target Types")
+        sys.exit()
 
 def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_columns_excluded, t_columns_excluded,
                 html_report, extended_report, output_directory, isFeeder = 'N', counter = '', isFolderComparison = ''):
 
     source_data = pd.read_csv(s_file, sep=s_delimiter, encoding_errors='ignore')
     target_data = pd.read_csv(t_file, sep=t_delimiter, encoding_errors='ignore')
+
+    s_columns_excluded_list = [col.lower() for col in s_columns_excluded.split(",")]
+    t_columns_excluded_list = [col.lower() for col in t_columns_excluded.split(",")]
+
+    print(f'\t\t\tSource File: \'{os.path.abspath(s_file)}\n\t\t\t\tSource Key: {s_key.replace('~', ',')}'
+          f'\n\t\t\t\tExcluded Columns: {','.join(s_columns_excluded_list)}'
+          f'\n\n\t\t\tTarget File: \'{os.path.abspath(t_file)}\n\t\t\t\tTarget Key: {t_key.replace('~', ', ')}'
+          f'\n\t\t\t\tExcluded Columns: {','.join(t_columns_excluded_list)}')
 
     source_record_count = len(source_data)
     target_record_count = len(target_data)
@@ -136,7 +152,7 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
 
 
     elif s_key == '' and t_key == '':
-        print('\t\tNo Primary Keys provided, generating Composite Keys using all the columns')
+        print('\n\t\t\tNo Primary Keys provided, generating Composite Keys using all the columns')
         sColumnList = list(source_data.columns)
         tColumnList = list(target_data.columns)
         source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1)
@@ -186,18 +202,22 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     os.makedirs(output_directory, exist_ok=True)
     fileName = os.path.basename(s_file) + ' vs. ' + os.path.basename(t_file)
 
-    if isFeeder.upper() == 'Y' or isFolderComparison.upper() == 'Y':  # HERE
+    if isFeeder.upper() == 'Y' or isFolderComparison.upper() == 'Y':
         fileName = counter + '_' + fileName
+
     abs_extended_report = output_directory + '\\'+ fileName + '_' +extended_report
     ext_report = open(abs_extended_report, 'w')
-    ext_report.write('KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS' + '\n')
+    ext_report.write(f'KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS\n')
 
-    for scolumn in source_data.columns:
-        if scolumn not in s_columns_excluded:
-            s_columns.append(scolumn)
-    for tcolumn in target_data.columns:
-        if tcolumn not in t_columns_excluded:
-            t_columns.append(tcolumn)
+    # Case-insensitive comparison for source columns
+    for s_column in source_data.columns:
+        if s_column.lower() not in s_columns_excluded_list:  # Compare case-insensitively
+            s_columns.append(s_column)
+
+    # Case-insensitive comparison for target columns
+    for t_column in target_data.columns:
+        if t_column.lower() not in t_columns_excluded_list:  # Compare case-insensitively
+            t_columns.append(t_column)
 
     source_keys = set(source_data.index)  # Convert source keys to a set
     target_keys = set(target_data.index)  # Convert target keys to a set
@@ -235,10 +255,18 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                   f'\n\t\t\t\tSource Duplicates: {int(len(source_duplicates)/2)}'
                   f'\n\t\t\t\tTarget Duplicates: {int(len(target_duplicates)/2)}'
                   f'\n\t\t\tPlease ensure unique keys in your data before proceeding.')
-
             sys.exit('\nProgram terminated due to duplicate keys.')
 
-    print('\nStarting data comparison...')
+    print('\n\t\tStarting data comparison...')
+    s_columns_set = set(s_columns)
+    t_columns_set = set(t_columns)
+    missing_in_source = t_columns_set - s_columns_set
+    missing_in_target = s_columns_set - t_columns_set
+    missing_in_source = '~'.join(missing_in_source)
+    missing_in_target = '~'.join(missing_in_target)
+    ext_report.write(f',{missing_in_source},{s_file},,{t_file},,Missing in Source\n')
+    ext_report.write(f',{missing_in_target},{s_file},,{t_file},,Missing in Target\n')
+
     for key in matched_keys:
         s_row = source_data.loc[key]
         t_row = target_data.loc[key]
@@ -252,9 +280,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
                         if s_row[s_column] != t_row[t_column]:
                             row_mismatches += 1  # Increment the mismatch count for this row
                             total_mismatches += 1  # Increment the overall mismatch count
-                            ext_report.write(get_key(key) + ',' + str(s_column) + ',' +
-                                             s_file + ',' + str(s_row[s_column]) + ',' +
-                                             t_file + ',' + str(t_row[t_column]) + ', Mismatch' + '\n')
+                            ext_report.write(f'{get_key(key)}, {str(s_column)}, {s_file}, {str(s_row[s_column])}, '
+                                             f'{t_file}, {str(t_row[t_column])}, Mismatch\n')
             if row_mismatches > 0:  # If there were any mismatches in the row
                 mismatched_records += 1  # Count this row as a mismatched record
             else:
@@ -267,19 +294,12 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         ext_report.write(f'{get_key(key)},,{s_file},,{t_file},,Missing in Target\n')
 
     ext_report.close()
-    print('Comparison Stats: ')
-    print('\tTotal Record Count: ')
-    print('\t\t-> Source: ', source_record_count)
-    print('\t\t-> Target: ', target_record_count)
-    print('\tRecords with matching primary/composite keys across Source and Target: ', len(matched_keys))
-    print('\t\t-> Matched Records: ', matched_records)
-    print('\t\t-> Mismatched Records: ', mismatched_records)
-    print('\tMissing Records: ')
-    print('\t\t-> Records present only in Source: ', records_in_source_only)
-    print('\t\t-> Records present only in Target: ', records_in_target_only)
-    print('\tDuplicate Records')
-    print('\t\t-> Source: ', source_duplicate_count)
-    print('\t\t-> Target: ', target_duplicate_count)
+    print(f'\t\t\tComparison Stats:\n\t\t\t\tTotal Record Count:\n\t\t\t\t\t-> Source:  {source_record_count}\n\t\t\t\t'
+          f'\t-> Target: {target_record_count}\n\t\t\t\tRecords with matching primary/composite keys across Source and '
+          f'Target: {len(matched_keys)} \n\t\t\t\t\t-> Matched Records: {matched_records}\n\t\t\t\t\t-> Mismatched '
+          f'Records: {mismatched_records}\n\t\t\t\tMissing Records: \n\t\t\t\t\t-> Records present only in Source: '
+          f'{records_in_source_only}\n\t\t\t\t\t-> Records present only in Target: {records_in_target_only}\n\t\t\t\t'
+          f'Duplicate Records\n\t\t\t\t\t-> Source: {source_duplicate_count}\n\t\t\t\t\t-> Target: ', target_duplicate_count)
 
     reportHTML.create_html_report(source_record_count,target_record_count,matched_records,mismatched_records,
                                   records_in_source_only, records_in_target_only,fileName+'_'+html_report,output_directory,

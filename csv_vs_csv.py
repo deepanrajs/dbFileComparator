@@ -105,8 +105,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     source_data = pd.read_csv(s_file, sep=s_delimiter, encoding_errors='ignore')
     target_data = pd.read_csv(t_file, sep=t_delimiter, encoding_errors='ignore')
 
-    s_columns_excluded_list = [col.lower() for col in s_columns_excluded.split(",")]
-    t_columns_excluded_list = [col.lower() for col in t_columns_excluded.split(",")]
+    s_columns_excluded_list = [col.lower() for col in s_columns_excluded.split("~")]
+    t_columns_excluded_list = [col.lower() for col in t_columns_excluded.split("~")]
 
     print(f'\t\t\tSource File: \'{os.path.abspath(s_file)}\n\t\t\t\tSource Key: {s_key.replace('~', ',')}'
           f'\n\t\t\t\tExcluded Columns: {','.join(s_columns_excluded_list)}'
@@ -143,8 +143,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
             target_data.columns = [col.lower() for col in target_data.columns]
 
             # Create composite keys for source and target data
-            source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join, axis=1)
-            target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join, axis=1)
+            source_data['composite_key'] = source_data[s_key_columns].astype(str).agg('_'.join, axis=1).str.replace('.0', '').str.replace('nan', '')
+            target_data['composite_key'] = target_data[t_key_columns].astype(str).agg('_'.join, axis=1).str.replace('.0', '').str.replace('nan', '')
 
             # Use the composite keys as indices
             source_data.set_index('composite_key', inplace=True)
@@ -155,8 +155,8 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         print('\n\t\t\tNo Primary Keys provided, generating Composite Keys using all the columns')
         sColumnList = list(source_data.columns)
         tColumnList = list(target_data.columns)
-        source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1)
-        target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join, axis=1)
+        source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1).str.replace('.0', '').str.replace('nan', '')
+        target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join, axis=1).str.replace('.0', '').str.replace('nan', '')
         source_data.set_index('composite_key', inplace=True)
         target_data.set_index('composite_key', inplace=True)
 
@@ -176,16 +176,16 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
         source_data.set_index(s_key[0], inplace=True)
         target_data.set_index(t_key[0], inplace=True)
 
-        source_data['composite_key'] = source_data.index.astype(str)
-        target_data['composite_key'] = target_data.index.astype(str)
+        source_data['composite_key'] = source_data.index.astype(str).str.replace('.0', '').str.replace('nan', '')
+        target_data['composite_key'] = target_data.index.astype(str).str.replace('.0', '').str.replace('nan', '')
 
     else:
         # If no keys are provided, fallback to row comparison
         sColumnList = list(source_data.columns)
         tColumnList = list(target_data.columns)
 
-        source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1)
-        target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join, axis=1)
+        source_data['composite_key'] = source_data[sColumnList].astype(str).agg('_'.join, axis=1).str.replace('.0', '').str.replace('nan', '')
+        target_data['composite_key'] = target_data[tColumnList].astype(str).agg('_'.join, axis=1).str.replace('.0', '').str.replace('nan', '')
 
         source_data.set_index('composite_key', inplace=True)
         target_data.set_index('composite_key', inplace=True)
@@ -218,7 +218,6 @@ def compare_csv(s_file, t_file, s_key, t_key, s_delimiter, t_delimiter, s_column
     for t_column in target_data.columns:
         if t_column.lower() not in t_columns_excluded_list:  # Compare case-insensitively
             t_columns.append(t_column)
-
     source_keys = set(source_data.index)  # Convert source keys to a set
     target_keys = set(target_data.index)  # Convert target keys to a set
 

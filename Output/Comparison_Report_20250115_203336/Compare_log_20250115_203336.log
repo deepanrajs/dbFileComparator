@@ -1,8 +1,0 @@
-2025-01-15 20:33:36,506 - ERROR - An error occurred: cannot access local variable 'sColumnList' where it is not associated with a value
-Reading Config...
-	Comparing CSV vs. CSV...
-
-		Individual File Comparison
-			Comparing Source: './input/generated_data1_source.csv' and Target: './input/generated_data1_target.csv'
-
-		Multiple Primary Keys provided, generating Composite Keys

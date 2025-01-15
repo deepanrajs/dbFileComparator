@@ -1,4 +1,0 @@
-KEY, COLUMN, SOURCE_TABLE, SOURCE_VALUE, TARGET_TABLE, TARGET_VALUE, COMMENTS
-,customer_id,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Source
-,cust_id,./input/generated_data1_source.csv,,./input/generated_data1_target.csv,,Missing in Target
-2, ship_mode, ./input/generated_data1_source.csv, StandardClass, ./input/generated_data1_target.csv, Standard Class, Mismatch
